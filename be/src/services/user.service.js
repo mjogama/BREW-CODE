@@ -1,17 +1,17 @@
-import User from "../models/User.js";
+import UserModel from "../models/UserModel.js";
 
 export const signupData = async (data) => {
-	return await User.create(data);
+	return await UserModel.create(data);
 };
 
 export const loginData = async (email) => {
-	return await User.findOne({ email: email });
+	return await UserModel.findOne({ email: email });
 };
 
 export const isEmailExist = async (email) => {
-	return await User.findOne({ email: email });
+	return await UserModel.findOne({ email: email });
 };
 
 export const retrieveTotalCustomer = async () => {
-	return await User.countDocuments();
+	return await UserModel.countDocuments();
 };

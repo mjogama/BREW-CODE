@@ -24,6 +24,7 @@ export const loginUser = asyncErrorHandler(async (req, res) => {
 	const user = req.data;
 
 	const userPayload = {
+		_id: user._id,
 		fullName: user.fullName,
 		email: user.email,
 		agreeTerms: user.agreeTerms,

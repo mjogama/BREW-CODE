@@ -15,6 +15,7 @@ const authToken = (req, res, next) => {
 		const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
 
 		const userData = {
+			userId: decoded._id,
 			fullName: decoded.fullName,
 			email: decoded.email,
 			agreeTerms: decoded.agreeTerms,

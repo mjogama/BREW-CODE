@@ -9,6 +9,7 @@ import express from "express";
 import globalMiddleware from "./middlewares/globalMiddleware.js";
 import connectDB from "./config/db.js";
 import userRoute from "./routes/user.route.js";
+import orderRoute from "./routes/order.route.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use(compression());
 
 app.use("/api/user", userRoute);
+app.use("/api/order", orderRoute);
 
 app.use(globalMiddleware);
 

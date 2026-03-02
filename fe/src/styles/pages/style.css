@@ -26,6 +26,7 @@ body {
 	background-color: var(--cream);
 	color: var(--text);
 	line-height: 1.6;
+	overflow-x: hidden;
 }
 
 /* ─── NAV ─────────────────────────────────────────────── */
@@ -81,16 +82,20 @@ nav {
 .nav-user {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 20px;
 	flex-shrink: 0;
+	z-index: -1;
 }
 
 .nav-cart {
 	position: relative;
 	text-decoration: none;
-	font-size: 1.2rem;
+	font-size: 1.4rem;
 	display: flex;
 	align-items: center;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
 }
 
 .cart-badge {
@@ -148,6 +153,213 @@ nav {
 	background-color: var(--brown-dark);
 	color: var(--cream);
 	border-color: var(--brown-dark);
+}
+
+.nav-cart-sidebar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100dvh;
+	width: 33dvw;
+	min-width: 280px;
+	background-color: #3f2f24;
+	border-top-left-radius: 5%;
+	border-bottom-left-radius: 5%;
+	/* padding: 2rem; */
+	transition: all 0.5s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	color: var(--cream);
+}
+
+.nav-cart-sidebar-animate {
+	transition: all 0.5s ease-in-out;
+	transform: translateX(480px);
+}
+
+.nav-cart-sidebar-header {
+	width: 100%;
+	padding: 1.5rem;
+	border-top-left-radius: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1.25rem;
+	flex-shrink: 0;
+}
+
+.nav-cart-sidebar-items > p {
+	padding: 0 1.5rem;
+}
+
+.nav-cart-sidebar-items > div {
+	margin: 0 1.5rem;
+}
+
+.nav-cart-sidebar-title {
+	font-size: 2rem;
+	font-weight: 700;
+	color: var(--cream);
+	font-style: italic;
+	margin: 0;
+}
+
+.nav-cart-sidebar-close {
+	background: none;
+	border: none;
+	color: var(--cream);
+	font-size: 1.5rem;
+	line-height: 1;
+	cursor: pointer;
+	padding: 4px 8px;
+	opacity: 0.9;
+}
+
+.nav-cart-sidebar-close:hover {
+	opacity: 1;
+}
+
+.nav-cart-sidebar-items {
+	flex: 1;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.nav-cart-sidebar-empty {
+	font-size: 0.9rem;
+	color: rgba(253, 246, 236, 0.7);
+	margin: 0;
+}
+
+.nav-cart-sidebar-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px 12px;
+	background-color: rgba(253, 246, 236, 0.08);
+	border-radius: var(--radius);
+	border: 1px solid rgba(253, 246, 236, 0.12);
+}
+
+.nav-cart-sidebar-item-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.nav-cart-sidebar-item-name {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--cream);
+}
+
+.nav-cart-sidebar-item-price {
+	font-size: 0.8rem;
+	color: rgba(253, 246, 236, 0.75);
+}
+
+.nav-cart-sidebar-item-actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.nav-cart-sidebar-qty-btn,
+.nav-cart-sidebar-remove {
+	width: 26px;
+	height: 26px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 6px;
+	background-color: rgba(232, 160, 69, 0.25);
+	color: var(--cream);
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.nav-cart-sidebar-qty-btn:hover,
+.nav-cart-sidebar-remove:hover {
+	background-color: var(--accent);
+	color: var(--brown-dark);
+}
+
+.nav-cart-sidebar-qty {
+	font-size: 0.85rem;
+	font-weight: 600;
+	min-width: 1.25rem;
+	text-align: center;
+}
+
+.nav-cart-sidebar-footer {
+	width: 100%;
+	background-color: rgba(253, 246, 236, 0.92);
+	padding: 1.5rem;
+	border-bottom-left-radius: 20px;
+	border-top: 1px solid rgba(253, 246, 236, 0.15);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+.nav-cart-sidebar-footer .nav-logout {
+	color: var(--cream);
+	border-color: rgba(253, 246, 236, 0.4);
+}
+
+.nav-cart-sidebar-footer .nav-logout:hover {
+	background-color: var(--cream);
+	color: var(--brown-dark);
+}
+
+.nav-cart-sidebar-footer-button {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.nav-cart-sideber-button-style {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: var(--muted);
+	text-decoration: none;
+	padding: 6px 14px;
+	border: 1.5px solid #d4b896;
+	border-radius: 50px;
+	transition:
+		background-color 0.2s,
+		color 0.2s,
+		border-color 0.2s;
+}
+
+.nav-cart-sideber-button-style:hover {
+	background-color: var(--brown-dark);
+	color: var(--cream);
+	border-color: var(--brown-dark);
+}
+
+.nav-cart-sidebar-amount {
+	color: var(--brown-mid);
+}
+
+.nav-cart-sidebar-amount-font-style {
+	font-style: italic;
+}
+
+.nav-cart-sidebar-delete-orders {
+}
+
+.nav-cart-sidebar-place-order {
 }
 
 /* ─── HERO ────────────────────────────────────────────── */
