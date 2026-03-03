@@ -53,10 +53,11 @@ export const retrieveUserData = asyncErrorHandler(async (req, res) => {
 });
 
 export const retrieveAdminData = asyncErrorHandler(async (req, res) => {
-	const { data, totalCustomer } = req.data;
+	const { data, totalCustomers } = req.data;
+
 	ResponseHandler(res, "success", 200, {
 		data,
-		totalCustomer,
+		totalCustomers,
 		message: "Created successfully",
 	});
 });
