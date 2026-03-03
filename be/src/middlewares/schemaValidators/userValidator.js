@@ -84,11 +84,11 @@ export const validateRetrieveAdminData = asyncErrorHandler(async (req, res, next
 		ErrorHandler("No data found", 404);
 	}
 
-	const totalCustomer = await userService.retrieveTotalCustomer();
+	const totalCustomers = await userService.retrieveTotalCustomer();
 
 	req.data = {
 		data,
-		totalCustomer,
+		totalCustomers,
 	};
 
 	next();
