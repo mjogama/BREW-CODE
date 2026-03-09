@@ -22,6 +22,10 @@ const editModal = document.getElementById("editProductModal");
 const editIdInput = document.getElementById("editProductId");
 const editNameInput = document.getElementById("editProductName");
 
+// search product elements
+const searchProducts = document.getElementById("searchProducts");
+const sortProducts = document.getElementById("sortProducts");
+
 // table products elements
 const tableBody = document.getElementById("productsTableBody");
 const tableCountBody = document.getElementById("tableCountBody");
@@ -104,6 +108,7 @@ const retrieveAdminData = async () => {
   const data = await retrieveProductAPI();
 
   const products = data.details.data || [];
+
   if (products.length === 0) {
     tableBody.innerHTML = `
 			<tr class="table-empty-row">
@@ -116,9 +121,10 @@ const retrieveAdminData = async () => {
 			</tr>
 		`;
   } else {
-    tableBody.innerHTML = products
-      .map((product) => {
-        return `
+    const renderProductRows = (productList) => {
+      tableBody.innerHTML = productList
+        .map((product) => {
+          return `
 			<tr class="product-row">
 				<td>
 					<div>
@@ -139,30 +145,58 @@ const retrieveAdminData = async () => {
 				</td>
 			</tr>
 		`;
-      })
-      .join("");
+        })
+        .join("");
+    };
 
-    tableBody.querySelectorAll(".edit-button").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const productId = btn.getAttribute("data-product-id");
-        const productName = btn.getAttribute("data-product-name");
+    renderProductRows(products);
 
-        if (editModal && editIdInput && editNameInput) {
-          editIdInput.value = productId;
-          editNameInput.value = productName || "";
-          document.getElementById("editProductError").textContent = "";
-          editModal.classList.add("open");
-        }
-      });
+    searchProducts?.addEventListener("input", () => {
+      const keyword = searchProducts.value.toLowerCase();
+      const filteredProducts = keyword === "" ? products : products.filter((product) => product.name.toLowerCase().includes(keyword));
+      renderProductRows(filteredProducts);
+      attachRowListeners();
     });
 
-    tableBody.querySelectorAll(".delete-button").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const productId = btn.getAttribute("data-product-id");
-        await deleteProductAPI(productId, accessToken);
-        retrieveAdminData();
-      });
+    sortProducts?.addEventListener("change", (e) => {
+      if (e.target.value === "name-asc") {
+        const sortedProductsAZ = products.sort((a, b) => a.name.localeCompare(b.name));
+
+        renderProductRows(sortedProductsAZ);
+      }
+
+      if (e.target.value === "name-desc") {
+        const sortedProductsAZ = products.sort((a, b) => b.name.localeCompare(a.name));
+
+        renderProductRows(sortedProductsAZ);
+      }
     });
+
+    const attachRowListeners = () => {
+      tableBody.querySelectorAll(".edit-button").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const productId = btn.getAttribute("data-product-id");
+          const productName = btn.getAttribute("data-product-name");
+
+          if (editModal && editIdInput && editNameInput) {
+            editIdInput.value = productId;
+            editNameInput.value = productName || "";
+            document.getElementById("editProductError").textContent = "";
+            editModal.classList.add("open");
+          }
+        });
+      });
+
+      tableBody.querySelectorAll(".delete-button").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const productId = btn.getAttribute("data-product-id");
+          await deleteProductAPI(productId, accessToken);
+          retrieveAdminData();
+        });
+      });
+    };
+
+    attachRowListeners();
   }
 
   tableCountBody.innerHTML = `
