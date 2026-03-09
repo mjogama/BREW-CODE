@@ -27,8 +27,6 @@ const retrieveUserInfo = async () => {
 		return;
 	}
 
-	localStorage.setItem("productQuantity", productQuantity.length);
-
 	const response = await fetch(`${baseURL}${retrieveUserInfoPath}`, {
 		headers: { Authorization: `Bearer ${accessToken}` },
 		credentials: "include",

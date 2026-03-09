@@ -437,6 +437,45 @@ body {
 	vertical-align: middle;
 }
 
+/* Table body cell content — keep text readable and aligned with design */
+.data-table tbody td div {
+	margin: 0;
+	font-size: inherit;
+	font-weight: 500;
+	color: inherit;
+}
+
+.data-table tbody td h1,
+.data-table tbody td div h1 {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--text);
+	margin: 0;
+	line-height: 1.4;
+}
+
+.data-table tbody td .id-cell {
+	font-family: "Courier New", monospace;
+	font-size: 0.78rem;
+	font-weight: 400;
+	color: var(--muted);
+}
+
+/* Product name: read-only in table; only Edit action changes it (id & Added stay unchanged) */
+.data-table tbody .product-name {
+	display: inline-block;
+	font-weight: 600;
+	color: var(--brown-dark);
+	font-size: 0.9rem;
+	line-height: 1.4;
+	padding: 4px 0;
+}
+
+.data-table tbody .product-date {
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
 .col-id {
 	width: 280px;
 }

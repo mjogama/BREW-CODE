@@ -10,6 +10,7 @@ import globalMiddleware from "./middlewares/globalMiddleware.js";
 import connectDB from "./config/db.js";
 import userRoute from "./routes/user.route.js";
 import orderRoute from "./routes/order.route.js";
+import productRoute from "./routes/product.route.js";
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ app.use(helmet());
 app.use(
 	cors({
 		origin: ["http://127.0.0.1:5500", "http://localhost:5500"],
-		methods: ["POST", "GET", "PUT", "DELETE"],
+		methods: ["POST", "GET", "PUT", "DELETE", "PATCH"],
 		allowedHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
 	}),
@@ -31,6 +32,7 @@ app.use(compression());
 
 app.use("/api/user", userRoute);
 app.use("/api/order", orderRoute);
+app.use("/api/product", productRoute);
 
 app.use(globalMiddleware);
 
