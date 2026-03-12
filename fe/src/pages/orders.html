@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brew & Code — Admin Dashboard</title>
+    <link rel="stylesheet" href="../styles/admin.css" />
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">Brew<span> & Code</span></div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="sidebar-nav-item active">
+            <a href="./admin.html">
+              <span class="nav-icon">📦</span>
+              <span>Products</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="./orders.html">
+              <span class="nav-icon">🛒</span>
+              <span>Orders</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#customers">
+              <span class="nav-icon">👥</span>
+              <span>Customers</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#analytics">
+              <span class="nav-icon">📊</span>
+              <span>Analytics</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="#settings">
+              <span class="nav-icon">⚙️</span>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="./login.html" class="sidebar-logout"> <span>🚪</span> Logout </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-layout">
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <div class="topbar-title">
+          <h1>Admin Dashboard</h1>
+          <p>Manage your Brew & Code products</p>
+        </div>
+        <div class="topbar-user">
+          <div class="topbar-avatar">A</div>
+          <span class="topbar-name" id="navbarName"></span>
+        </div>
+      </header>
+
+      <!-- MAIN -->
+      <main class="admin-main">
+        <!-- STATS STRIP -->
+        <div class="stats-strip">
+          <div class="stat-card">
+            <div class="stat-card-icon">📦</div>
+            <div class="stat-card-body">
+              <span class="stat-card-value" id="totalProducts">—</span>
+              <span class="stat-card-label">Total Products</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🛒</div>
+            <div class="stat-card-body">
+              <span class="stat-card-value" id="totalOrders">—</span>
+              <span class="stat-card-label">Total Orders</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">👥</div>
+            <div class="stat-card-body">
+              <span class="stat-card-value" id="totalCustomers">—</span>
+              <span class="stat-card-label">Customers</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">💰</div>
+            <div class="stat-card-body">
+              <span class="stat-card-value" id="totalRevenue">—</span>
+              <span class="stat-card-label">Revenue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORDERS SECTION -->
+        <section class="admin-section" id="products">
+          <div class="section-header">
+            <div>
+              <h2>Orders</h2>
+              <p>Manage your sweet orders</p>
+            </div>
+          </div>
+
+          <!-- SEARCH & FILTER BAR -->
+          <div class="table-toolbar">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="searchOrders" placeholder="Search products..." autocomplete="off" />
+            </div>
+            <div class="toolbar-actions">
+              <select id="sortOrders" class="toolbar-select">
+                <option value="">Sort by...</option>
+                <option value="name-asc">Name A–Z</option>
+                <option value="name-desc">Name Z–A</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ORDERS TABLE -->
+          <div class="table-wrapper">
+            <table class="data-table" id="ordersTable">
+              <thead>
+                <tr>
+                  <th class="col-id">ID</th>
+                  <th class="col-customer">Customer</th>
+                  <th class="col-purchased-products">Purchased Products</th>
+                  <th class="col-total-quantity">Total Quantity</th>
+                  <th class="col-status">Status</th>
+                  <th class="col-date">Added</th>
+                  <th class="col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Rows injected by JS via GET /api/order/data -->
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer" id="tableCountBodyOrders"></div>
+        </section>
+      </main>
+    </div>
+
+    <script defer type="module" src="../js/orders.js"></script>
+  </body>
+</html>

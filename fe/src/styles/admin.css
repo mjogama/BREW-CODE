@@ -481,6 +481,22 @@ body {
 }
 
 .col-name {
+  min-width: 100px;
+}
+
+.col-purchased-products {
+  min-width: 50px;
+}
+
+.col-status {
+  min-width: 50px;
+}
+
+.col-total-quantity {
+  min-width: 200px;
+}
+
+.col-customer {
   min-width: 200px;
 }
 

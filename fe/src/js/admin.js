@@ -59,7 +59,7 @@ const animateCount = (element, target, durationMs = 1200) => {
   requestAnimationFrame(update);
 };
 
-const retrieveAdminData = async () => {
+export const retrieveAdminData = async () => {
   const accessToken = sessionStorage.getItem("accessToken");
 
   if (!accessToken) {
