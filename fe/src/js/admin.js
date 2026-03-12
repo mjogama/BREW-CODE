@@ -1,4 +1,16 @@
-import { createNewProductAPI, retrieveProductAPI, retrieveTotalProductsAPI, updateProductAPI, deleteProductAPI } from "../api/adminAPI.js";
+import {
+	retrieveTotalProductsAPI,
+	retriveTotalOrdersAPI,
+	retrieveTotalCustomersAPI,
+	retriveTotalRevenueAPI,
+} from "../api/adminAPI/stats.js";
+import {
+	createNewProductAPI,
+	retrieveProductsAPI,
+	updateProductAPI,
+	deleteProductAPI,
+} from "../api/adminAPI/table.js";
+import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 
@@ -30,87 +42,33 @@ const sortProducts = document.getElementById("sortProducts");
 const tableBody = document.getElementById("productsTableBody");
 const tableCountBody = document.getElementById("tableCountBody");
 
-const baseURL = "http://localhost:8000/api";
-const pathAdmin = "/user/admin";
-const pathTotalOrders = "/order/totalOrders";
-const pathTotalRevenue = "/order/revenue";
-
-const animateCount = (element, target, durationMs = 1200) => {
-  let start = 0;
-  const startTime = performance.now();
-
-  function update(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / durationMs, 1);
-
-    // Ease-out: fast at start, slow at end
-    const eased = 1 - (1 - progress) ** 2;
-    const value = Math.round(start + (target - start) * eased);
-    element.textContent = value;
-
-    if (progress < 1) {
-      requestAnimationFrame(update);
-    } else {
-      element.textContent = target;
-    }
-  }
-
-  element.textContent = start;
-  requestAnimationFrame(update);
-};
-
 export const retrieveAdminData = async () => {
-  const accessToken = sessionStorage.getItem("accessToken");
+	const accessToken = sessionStorage.getItem("accessToken");
 
-  if (!accessToken) {
-    window.location.href = "./login.html";
-    return;
-  }
+	if (!accessToken) {
+		window.location.href = "./login.html";
+		return;
+	}
 
-  const productQuantity = await retrieveTotalProductsAPI();
+	const totalProducts = await retrieveTotalProductsAPI();
+	const totalOrders = await retriveTotalOrdersAPI();
+	const totalCustomers = await retrieveTotalCustomersAPI();
+	const totalRevenue = await retriveTotalRevenueAPI();
 
-  const responseAdmin = await fetch(`${baseURL}${pathAdmin}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-    credentials: "include",
-  });
+	navbarName.textContent = totalCustomers.data.fullName;
 
-  const responseTotalOrders = await fetch(`${baseURL}${pathTotalOrders}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+	// Use totalProducts from API (same origin, no dependency on visiting homepage)
+	animateCount(totalProductsEl, totalProducts ?? 0);
+	animateCount(totalOrdersEl, totalOrders ?? 0);
+	animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
+	animateCount(totalRevenueEl, totalRevenue ?? 0);
 
-  const repsonseTotalRevenue = await fetch(`${baseURL}${pathTotalRevenue}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+	const data = await retrieveProductsAPI();
 
-  if (!responseAdmin.ok) {
-    // const error = await responseAdmin.json();
-    // console.error(error.details.errorMessage);
-    window.location.href = "./login.html";
-    return;
-  }
+	const products = data.details.data || [];
 
-  const dataAdmin = await responseAdmin.json();
-  const dataTotalOrders = await responseTotalOrders.json();
-  const dataTotalRevenue = await repsonseTotalRevenue.json();
-
-  navbarName.textContent = dataAdmin.details.data.fullName;
-
-  // Use totalProducts from API (same origin, no dependency on visiting homepage)
-  animateCount(totalProductsEl, productQuantity ?? 0);
-  animateCount(totalOrdersEl, dataTotalOrders.details.totalOrders ?? 0);
-  animateCount(totalCustomersEl, dataAdmin.details.totalCustomers ?? 0);
-  animateCount(totalRevenueEl, dataTotalRevenue.details.revenue ?? 0);
-
-  const data = await retrieveProductAPI();
-
-  const products = data.details.data || [];
-
-  if (products.length === 0) {
-    tableBody.innerHTML = `
+	if (products.length === 0) {
+		tableBody.innerHTML = `
 			<tr class="table-empty-row">
 				<td colspan="4">
 					<div class="empty-state">
@@ -120,11 +78,11 @@ export const retrieveAdminData = async () => {
 				</td>
 			</tr>
 		`;
-  } else {
-    const renderProductRows = (productList) => {
-      tableBody.innerHTML = productList
-        .map((product) => {
-          return `
+	} else {
+		const renderProductRows = (productList) => {
+			tableBody.innerHTML = productList
+				.map((product) => {
+					return `
 			<tr class="product-row">
 				<td>
 					<div>
@@ -145,105 +103,113 @@ export const retrieveAdminData = async () => {
 				</td>
 			</tr>
 		`;
-        })
-        .join("");
-    };
+				})
+				.join("");
+		};
 
-    renderProductRows(products);
+		renderProductRows(products);
 
-    searchProducts?.addEventListener("input", () => {
-      const keyword = searchProducts.value.toLowerCase();
-      const filteredProducts = keyword === "" ? products : products.filter((product) => product.name.toLowerCase().includes(keyword));
-      renderProductRows(filteredProducts);
-      attachRowListeners();
-    });
+		searchProducts?.addEventListener("input", () => {
+			const keyword = searchProducts.value.toLowerCase();
+			const filteredProducts =
+				keyword === ""
+					? products
+					: products.filter((product) => product.name.toLowerCase().includes(keyword));
+			renderProductRows(filteredProducts);
+			attachRowListeners();
+		});
 
-    sortProducts?.addEventListener("change", (e) => {
-      if (e.target.value === "name-asc") {
-        const sortedProductsAZ = products.sort((a, b) => a.name.localeCompare(b.name));
+		sortProducts?.addEventListener("change", (e) => {
+			if (e.target.value === "name-asc") {
+				const sortedProductsAZ = products.sort((a, b) => a.name.localeCompare(b.name));
 
-        renderProductRows(sortedProductsAZ);
-      }
+				renderProductRows(sortedProductsAZ);
+			}
 
-      if (e.target.value === "name-desc") {
-        const sortedProductsAZ = products.sort((a, b) => b.name.localeCompare(a.name));
+			if (e.target.value === "name-desc") {
+				const sortedProductsAZ = products.sort((a, b) => b.name.localeCompare(a.name));
 
-        renderProductRows(sortedProductsAZ);
-      }
-    });
+				renderProductRows(sortedProductsAZ);
+			}
+		});
 
-    const attachRowListeners = () => {
-      tableBody.querySelectorAll(".edit-button").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const productId = btn.getAttribute("data-product-id");
-          const productName = btn.getAttribute("data-product-name");
+		const attachRowListeners = () => {
+			tableBody.querySelectorAll(".edit-button").forEach((btn) => {
+				btn.addEventListener("click", async () => {
+					const productId = btn.getAttribute("data-product-id");
+					const productName = btn.getAttribute("data-product-name");
 
-          if (editModal && editIdInput && editNameInput) {
-            editIdInput.value = productId;
-            editNameInput.value = productName || "";
-            document.getElementById("editProductError").textContent = "";
-            editModal.classList.add("open");
-          }
-        });
-      });
+					if (editModal && editIdInput && editNameInput) {
+						editIdInput.value = productId;
+						editNameInput.value = productName || "";
+						document.getElementById("editProductError").textContent = "";
+						editModal.classList.add("open");
+					}
+				});
+			});
 
-      tableBody.querySelectorAll(".delete-button").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-          const productId = btn.getAttribute("data-product-id");
-          await deleteProductAPI(productId, accessToken);
-          retrieveAdminData();
-        });
-      });
-    };
+			tableBody.querySelectorAll(".delete-button").forEach((btn) => {
+				btn.addEventListener("click", async () => {
+					const productId = btn.getAttribute("data-product-id");
+					await deleteProductAPI(productId, accessToken);
+					retrieveAdminData();
+				});
+			});
+		};
 
-    attachRowListeners();
-  }
+		attachRowListeners();
+	}
 
-  tableCountBody.innerHTML = `
-		<span class="table-count" id="tableCount">Showing ${productQuantity ?? 0} products</span>
+	tableCountBody.innerHTML = `
+		<span class="table-count" id="tableCount">Showing ${totalProducts ?? 0} products</span>
 	`;
 };
 
 // add product modal: open only on button click
 openAddProductModalButton?.addEventListener("click", () => {
-  addProductModal?.classList.add("open");
-  newProductEmoji.value = "";
-  newProductName.value = "";
-  newProductDesc.value = "";
-  newProductPrice.value = "";
+	addProductModal?.classList.add("open");
+	newProductEmoji.value = "";
+	newProductName.value = "";
+	newProductDesc.value = "";
+	newProductPrice.value = "";
 });
 
 const closeAddProductModal = () => {
-  addProductModal?.classList.remove("open");
+	addProductModal?.classList.remove("open");
 };
 
 document.getElementById("closeAddProductModal")?.addEventListener("click", closeAddProductModal);
 document.getElementById("cancelAddProduct")?.addEventListener("click", closeAddProductModal);
 
 document.getElementById("addProductForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+	e.preventDefault();
 
-  if (!newProductEmoji.value || !newProductName.value || !newProductDesc.value || !newProductPrice.value) {
-    const addProductError = document.getElementById("addProductError");
+	if (
+		!newProductEmoji.value ||
+		!newProductName.value ||
+		!newProductDesc.value ||
+		!newProductPrice.value
+	) {
+		const addProductError = document.getElementById("addProductError");
 
-    if (!addProductError) return;
-    addProductError.textContent = "All fields are required.";
+		if (!addProductError) return;
+		addProductError.textContent = "All fields are required.";
 
-    setTimeout(() => {
-      addProductError.textContent = "";
-    }, 2000);
-    return;
-  }
+		setTimeout(() => {
+			addProductError.textContent = "";
+		}, 2000);
+		return;
+	}
 
-  await createNewProductAPI({
-    emoji: newProductEmoji.value,
-    name: newProductName.value,
-    desc: newProductDesc.value,
-    price: newProductPrice.value,
-  });
+	await createNewProductAPI({
+		emoji: newProductEmoji.value,
+		name: newProductName.value,
+		desc: newProductDesc.value,
+		price: newProductPrice.value,
+	});
 
-  closeAddProductModal();
-  retrieveAdminData();
+	closeAddProductModal();
+	retrieveAdminData();
 });
 
 // Modal for table actions
@@ -253,10 +219,10 @@ document.getElementById("closeEditProductModal")?.addEventListener("click", clos
 document.getElementById("cancelEditProduct")?.addEventListener("click", closeEditModal);
 
 document.getElementById("editProductForm")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const data = await updateProductAPI(editIdInput.value, editNameInput.value);
-  closeEditModal();
-  if (data) retrieveAdminData();
+	e.preventDefault();
+	const data = await updateProductAPI(editIdInput.value, editNameInput.value);
+	closeEditModal();
+	if (data) retrieveAdminData();
 });
 
 retrieveAdminData();
