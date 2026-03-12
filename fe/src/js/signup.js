@@ -1,3 +1,4 @@
+import { signupAPI } from "../api/signupAPI/signup.js";
 import displayError from "../utils/displayError.js";
 
 const signupFormButton = document.getElementById("signupForm");
@@ -20,11 +21,6 @@ const fieldByPath = {
 	passwordError: { input: password, errorEl: passwordError },
 };
 
-// path
-
-const baseURL = "http://localhost:8000/api";
-const signupPath = "/user/signup";
-
 const signupFormHandler = async (e) => {
 	e.preventDefault();
 
@@ -43,16 +39,10 @@ const signupFormHandler = async (e) => {
 		agreeTerms: agreeTerms.checked,
 	};
 
-	const response = await fetch(`${baseURL}${signupPath}`, {
-		headers: { "Content-Type": "application/json" },
-		method: "POST",
-		body: JSON.stringify(userData),
-		credentials: "include",
-	});
+	const data = await signupAPI(userData);
 
-	if (!response.ok) {
-		const error = await response.json();
-		const details = error.details ?? {};
+	if (data.errorTitle) {
+		const details = data.details ?? {};
 		const path = details.errorPath;
 		const msg = details.errorMessage ?? "Signup failed";
 		const message = Array.isArray(msg) ? msg[0] : msg;
