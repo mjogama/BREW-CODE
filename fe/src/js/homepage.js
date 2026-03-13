@@ -23,11 +23,6 @@ const displayOrderTotalAmount = document.getElementById("displayOrderTotalAmount
 
 const menuBody = document.getElementById("menuBody");
 
-const baseURL = "http://localhost:8000/api";
-const createNewOrderPath = "/order/new";
-const retrieveUserInfoPath = "/user";
-const retrieveMenuPath = "/product";
-
 // Cart state: each item is { productName, price, quantity }
 let cart = [];
 let totalAmount = 0;
@@ -174,11 +169,8 @@ const modalPlaceOrderYesButton = () => {
 		clearInterval(modalCountdown);
 		modalCountdown = null;
 	}
-	createNewOrder(cart);
-	cart = [];
-	renderCartSidebar();
-	updateCartBadge();
-	closeCartSidebar();
+	count = 10;
+	if (navCartSidebarModalCountdown) navCartSidebarModalCountdown.textContent = count;
 	navCartSidebarAddMore.classList.add("is-hidden");
 };
 
@@ -187,8 +179,11 @@ const modalPlaceOrderNoButton = () => {
 		clearInterval(modalCountdown);
 		modalCountdown = null;
 	}
-	count = 10;
-	if (navCartSidebarModalCountdown) navCartSidebarModalCountdown.textContent = count;
+	createNewOrder(cart);
+	cart = [];
+	renderCartSidebar();
+	updateCartBadge();
+	closeCartSidebar();
 	navCartSidebarAddMore.classList.add("is-hidden");
 };
 
