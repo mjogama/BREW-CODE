@@ -1,3 +1,8 @@
+import {
+	createNewOrderAPI,
+	retrieveUserDataAPI,
+	retrieveMenuAPI,
+} from "../api/homepageAPI/homepageData.js";
 import renderMenus from "../helpers/homepage/renderMenuHelper.js";
 
 const navUsername = document.getElementById("navUsername");
@@ -37,26 +42,14 @@ const retrieveHomepageData = async () => {
 		return;
 	}
 
-	const resUser = await fetch(`${baseURL}${retrieveUserInfoPath}`, {
-		headers: { Authorization: `Bearer ${accessToken}` },
-		credentials: "include",
-	});
+	const userResult = await retrieveUserDataAPI();
 
-	const resMenu = await fetch(`${baseURL}${retrieveMenuPath}`);
+	const menuResult = await retrieveMenuAPI();
 
-	if (!resUser.ok) {
-		window.location.href = "./login.html";
-		return;
-	}
+	renderMenus(menuResult);
 
-	const userData = await resUser.json();
-
-	const menuData = await resMenu.json();
-
-	renderMenus(menuData.details.data);
-
-	if (navUsername && userData.details?.data?.fullName) {
-		navUsername.textContent = userData.details.data.fullName;
+	if (navUsername && userResult) {
+		navUsername.textContent = userResult;
 	}
 };
 
@@ -68,22 +61,7 @@ const createNewOrder = async (purchasedProducts) => {
 		return;
 	}
 
-	const response = await fetch(`${baseURL}${createNewOrderPath}`, {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${accessToken}`,
-		},
-		credentials: "include",
-		method: "POST",
-		body: JSON.stringify({ purchasedProducts, totalAmount }),
-	});
-
-	if (!response.ok) {
-		console.error("Something went wrong.");
-		return;
-	}
-
-	const data = await response.json();
+	await createNewOrderAPI(purchasedProducts, totalAmount);
 
 	displayOrderTotalAmount.textContent = `₱${(0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
