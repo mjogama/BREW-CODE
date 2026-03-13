@@ -1,3 +1,4 @@
+import { loginAPI } from "../api/loginAPI/loginForm.js";
 import displayError from "../utils/displayError.js";
 
 // Form elements
@@ -16,71 +17,62 @@ const baseURL = "http://localhost:8000/api";
 const loginPath = "/user/login";
 
 const loginFormHandler = async (e) => {
-  e.preventDefault();
+	e.preventDefault();
 
-  const userData = {
-    email: email.value.trim(),
-    password: password.value.trim(),
-  };
+	const userData = {
+		email: email.value.trim(),
+		password: password.value.trim(),
+	};
 
-  if (!userData.email) return displayError(email, emailError);
-  if (!userData.password) return displayError(password, passwordError);
+	if (!userData.email) return displayError(email, emailError);
+	if (!userData.password) return displayError(password, passwordError);
 
-  const response = await fetch(`${baseURL}${loginPath}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
+	const data = await loginAPI(userData);
 
-  if (!response.ok) {
-    const error = await response.json();
-    return displayError(email, emailError, error.details.errorMessage);
-  }
+	if (data.errorTitle) {
+		return displayError(email, emailError, data.details.errorMessage);
+	}
 
-  const data = await response.json();
+	if (!data.details.token) {
+		return displayError(email, emailError, "No Token provided");
+	}
 
-  if (!data.details.token) {
-    return displayError(email, emailError, "No Token provided");
-  }
+	sessionStorage.setItem("accessToken", data.details.token);
+	if (data.details.rfToken) {
+		sessionStorage.setItem("refreshToken", data.details.rfToken);
+	}
 
-  sessionStorage.setItem("accessToken", data.details.token);
-  if (data.details.rfToken) {
-    sessionStorage.setItem("refreshToken", data.details.rfToken);
-  }
+	const token = data.details.token;
+	const payload = JSON.parse(atob(token.split(".")[1]));
 
-  const token = data.details.token;
-  const payload = JSON.parse(atob(token.split(".")[1]));
+	const ALLOWED_ROLES = ["customer", "admin"];
+	const role = payload?.role;
 
-  const ALLOWED_ROLES = ["customer", "admin"];
-  const role = payload?.role;
+	if (!role || !ALLOWED_ROLES.includes(role)) {
+		sessionStorage.removeItem("accessToken");
+		sessionStorage.removeItem("refreshToken");
+		emailError.textContent = "Unauthorized role. Please contact support.";
+		setTimeout(() => {
+			emailError.textContent = "";
+		}, 3000);
+		return;
+	}
 
-  if (!role || !ALLOWED_ROLES.includes(role)) {
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
-    emailError.textContent = "Unauthorized role. Please contact support.";
-    setTimeout(() => {
-      emailError.textContent = "";
-    }, 3000);
-    return;
-  }
+	const redirectPath = role === "admin" ? "./admin.html" : "./homepage.html";
 
-  const redirectPath = role === "admin" ? "./admin.html" : "./homepage.html";
-
-  window.location.href = redirectPath;
-  email.value = "";
-  password.value = "";
+	window.location.href = redirectPath;
+	email.value = "";
+	password.value = "";
 };
 
 const togglePasswordHandler = (e) => {
-  e.preventDefault();
+	e.preventDefault();
 
-  if (password.type === "password") {
-    password.type = "text";
-  } else {
-    password.type = "password";
-  }
+	if (password.type === "password") {
+		password.type = "text";
+	} else {
+		password.type = "password";
+	}
 };
 
 loginFormButton?.addEventListener("submit", loginFormHandler);
