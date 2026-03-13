@@ -162,6 +162,7 @@ const placeOrderButton = () => {
 			navCartSidebarAddMore.classList.add("is-hidden");
 		}
 	}, 1000);
+	navCartSidebarModalCountdown.classList.remove("is-text-red");
 };
 
 const modalPlaceOrderYesButton = () => {

@@ -397,6 +397,7 @@ nav {
 .nav-cart-sidebar-add-more-yes,
 .nav-cart-sidebar-add-more-no {
 	cursor: pointer;
+	padding: 10px 24px;
 }
 
 .nav-cart-sidebar-add-more-no {
