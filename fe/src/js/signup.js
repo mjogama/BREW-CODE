@@ -1,4 +1,4 @@
-import { signupAPI } from "../api/signupAPI/signup.js";
+import { signupAPI } from "../api/signupAPI/signupForm.js";
 import displayError from "../utils/displayError.js";
 
 const signupFormButton = document.getElementById("signupForm");
