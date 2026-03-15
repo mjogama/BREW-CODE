@@ -2,6 +2,7 @@ import asyncErrorHandler from "express-async-handler";
 
 import * as orderService from "../../services/order.service.js";
 import ErrorHandler from "../../helpers/errorHandler.js";
+import validateObjectId from "../../helpers/validateObjectId.js";
 
 export const validateNewOrder = asyncErrorHandler(async (req, res, next) => {
 	const userId = req.data?.userId;
@@ -44,6 +45,24 @@ export const validateTotalRevenue = asyncErrorHandler(async (req, res, next) => 
 	const totalRevenue = await orderService.totalRevenue();
 
 	req.data = totalRevenue;
+
+	next();
+});
+
+export const validateDeleteOrder = asyncErrorHandler(async (req, res, next) => {
+	const id = req.params.id;
+
+	validateObjectId(id);
+
+	const order = await orderService.retrieveOrderById(id);
+
+	if (!order) {
+		ErrorHandler("ID not found or Invalid", 404);
+	}
+
+	req.data = {
+		id,
+	};
 
 	next();
 });
