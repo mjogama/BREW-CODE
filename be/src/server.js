@@ -19,12 +19,12 @@ const PORT = process.env.PORT || 8080;
 
 app.use(helmet());
 app.use(
-	cors({
-		origin: ["http://127.0.0.1:5500", "http://localhost:5500"],
-		methods: ["POST", "GET", "PUT", "DELETE", "PATCH"],
-		allowedHeaders: ["Content-Type", "Authorization"],
-		credentials: true,
-	}),
+  cors({
+    origin: ["http://127.0.0.1:5500", "http://localhost:5500"],
+    methods: ["POST", "GET", "PUT", "DELETE", "PATCH", "OPTION"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
 );
 app.use(morgan("dev"));
 app.use(express.json());
@@ -37,10 +37,10 @@ app.use("/api/product", productRoute);
 app.use(globalMiddleware);
 
 const serverStarter = asyncErrorHandler(async () => {
-	await connectDB();
-	app.listen(PORT, () => {
-		console.log(`Server listening at port ${PORT}`);
-	});
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server listening at port ${PORT}`);
+  });
 });
 
 serverStarter();
