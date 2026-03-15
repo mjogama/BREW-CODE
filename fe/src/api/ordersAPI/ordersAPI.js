@@ -3,35 +3,50 @@ import { ORDERS } from "../../constants/endpoints/ordersPath.js";
 
 const accessToken = sessionStorage.getItem("accessToken");
 
-export const retrieveOrdersData = async () => {
-	if (!accessToken) {
-		window.location.href = "./login.html";
-		return;
-	}
+export const retrieveOrdersDataAPI = async () => {
+  if (!accessToken) {
+    window.location.href = "./login.html";
+    return;
+  }
 
-	const res = await fetch(`${BASE_URL.baseURL}${ORDERS.retrieveOrdersDataPath}`, {
-		headers: {
-			Authorization: `Bearer ${accessToken}`,
-		},
-	});
+  const res = await fetch(`${BASE_URL.baseURL}${ORDERS.retrieveOrdersDataPath}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
-	if (!res.ok) {
-		window.location.href = "./login.html";
-		return;
-	}
+  if (!res.ok) {
+    window.location.href = "./login.html";
+    return;
+  }
 
-	return await res.json();
+  return await res.json();
 };
 
-export const deleteOrderData = async (orderId) => {
-	const res = await fetch(`${BASE_URL.baseURL}${ORDERS.deleteOrderDataPath}/${orderId}`, {
-		headers: {
-			Authorization: `Bearer ${accessToken}`,
-		},
-		method: "DELETE",
-	});
+export const updateOrderDataAPI = async (id, value) => {
+  const res = await fetch(`${BASE_URL.baseURL}${ORDERS.updateOrdersDataPath}/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    method: "PATCH",
+    body: JSON.stringify({ status: value }),
+  });
 
-	const data = await res.json();
+  const data = await res.json();
 
-	return data.details;
+  return data.detials;
+};
+
+export const deleteOrderDataAPI = async (orderId) => {
+  const res = await fetch(`${BASE_URL.baseURL}${ORDERS.deleteOrderDataPath}/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    method: "DELETE",
+  });
+
+  const data = await res.json();
+
+  return data.details;
 };
