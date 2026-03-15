@@ -1,4 +1,4 @@
-import { retrieveOrdersData, deleteOrderData } from "../api/ordersAPI/ordersAPI.js";
+import { retrieveOrdersDataAPI, updateOrderDataAPI, deleteOrderDataAPI } from "../api/ordersAPI/ordersAPI.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 import formatData from "../utils/formatDate.js";
 
@@ -8,7 +8,7 @@ const retrieveOrdersDataHandler = async () => {
   const tableCountBodyOrders = document.getElementById("tableCountBodyOrders");
   const sortOrders = document.getElementById("sortOrders");
 
-  const data = await retrieveOrdersData();
+  const data = await retrieveOrdersDataAPI();
 
   const orders = data.details.orders || [];
   const user = orders.map((user) => user.fullName);
@@ -97,10 +97,10 @@ const retrieveOrdersDataHandler = async () => {
           		</div>
        		</td>
         	<td>
-				<select class="order-status-select toolbar-select" data-name="${regexHTMLHandler(order.user.fullName)}">
-					<option value="">${regexHTMLHandler(order.status)}</option>
-					<option value="ongoing">Ongoing</option>
-					<option value="finished">Finished</option>
+				<select class="order-status-select toolbar-select" data-order-id="${regexHTMLHandler(order._id)}" data-prev-status="${regexHTMLHandler(order.status)}">
+					<option value="pending" ${order.status === "pending" ? "selected" : ""}>pending</option>
+					<option value="ongoing" ${order.status === "ongoing" ? "selected" : ""}>ongoing</option>
+					<option value="finished" ${order.status === "finished" ? "selected" : ""}>finished</option>
 				</select>
         	</td>
         	<td>
@@ -158,8 +158,8 @@ const retrieveOrdersDataHandler = async () => {
 
   orderStatusSelects.forEach((button) => {
     button.addEventListener("change", () => {
-      const user = button.getAttribute("data-name");
-      if (!user) return;
+      const userId = button.getAttribute("data-order-id");
+      if (!userId) return;
 
       // Store references BEFORE showing modal
       activeOrderButton = button;
@@ -169,22 +169,13 @@ const retrieveOrdersDataHandler = async () => {
     });
   });
 
-  orderDeleteButton.forEach((button) => {
-    button?.addEventListener("click", async () => {
-      const orderId = button.getAttribute("data-order-id");
-
-      await deleteOrderData(orderId);
-
-      retrieveOrdersDataHandler();
-    });
-  });
-
-  const statusModalYesHandler = () => {
+  const statusModalYesHandler = async () => {
     statusChangeModal.classList.remove("is-modal-overlay-hidden");
 
     // Update the prev-status to the new value for next time
     if (activeOrderButton) {
-      activeOrderButton.setAttribute("data-prev-status", activeOrderButton.value);
+      const userId = activeOrderButton.getAttribute("data-order-id");
+      await updateOrderDataAPI(userId, activeOrderButton.value);
     }
 
     activeOrderButton = null;
@@ -197,14 +188,24 @@ const retrieveOrdersDataHandler = async () => {
       // Revert to previous status
       activeOrderButton.value = previousStatus;
 
-      // Optional: reset to default if no previous status
-      if (!previousStatus) {
-        activeOrderButton.selectedIndex = 0;
-      }
+      // // Optional: reset to default if no previous status
+      // if (!previousStatus) {
+      //   activeOrderButton.selectedIndex = 0;
+      // }
     }
 
     activeOrderButton = null;
   };
+
+  orderDeleteButton.forEach((button) => {
+    button?.addEventListener("click", async () => {
+      const orderId = button.getAttribute("data-order-id");
+
+      await deleteOrderDataAPI(orderId);
+
+      retrieveOrdersDataHandler();
+    });
+  });
 
   statusModalYesButton?.addEventListener("click", statusModalYesHandler);
   statusModalNoButton?.addEventListener("click", statusModalNoHandler);
