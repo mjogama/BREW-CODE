@@ -1,12 +1,34 @@
+import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomersAPI, retriveTotalRevenueAPI } from "../api/adminAPI/stats.js";
+import animateCount from "../utils/animateCount.js";
 import { retrieveOrdersDataAPI, updateOrderDataAPI, deleteOrderDataAPI } from "../api/ordersAPI/ordersAPI.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 import formatData from "../utils/formatDate.js";
+
+// stats elements
+const totalProductsEl = document.getElementById("totalProducts");
+const totalOrdersEl = document.getElementById("totalOrders");
+const totalCustomersEl = document.getElementById("totalCustomers");
+const totalRevenueEl = document.getElementById("totalRevenue");
 
 const retrieveOrdersDataHandler = async () => {
   const ordersTableBody = document.getElementById("ordersTableBody");
   const statusChangeModal = document.getElementById("statusChangeModal");
   const tableCountBodyOrders = document.getElementById("tableCountBodyOrders");
   const sortOrders = document.getElementById("sortOrders");
+
+  // stats data
+  const totalProducts = await retrieveTotalProductsAPI();
+  const totalOrders = await retriveTotalOrdersAPI();
+  const totalCustomers = await retrieveTotalCustomersAPI();
+  const totalRevenue = await retriveTotalRevenueAPI();
+
+  navbarName.textContent = totalCustomers.data.fullName;
+
+  // Use totalProducts from API (same origin, no dependency on visiting homepage)
+  animateCount(totalProductsEl, totalProducts ?? 0);
+  animateCount(totalOrdersEl, totalOrders ?? 0);
+  animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
+  animateCount(totalRevenueEl, totalRevenue ?? 0);
 
   const data = await retrieveOrdersDataAPI();
 
