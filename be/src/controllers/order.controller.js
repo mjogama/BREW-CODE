@@ -15,8 +15,8 @@ export const newCustomer = asyncErrorHandler(async (req, res) => {
 	await orderService.newOrder(purchasedInfo);
 
 	ResponseHandler(res, "success", 201, {
-		purchasedData: null,
 		message: "Purchased successfully!",
+		purchasedData: null,
 	});
 });
 
@@ -24,8 +24,8 @@ export const retrieveOrders = asyncErrorHandler(async (req, res) => {
 	const orders = await orderService.retrieveOrders();
 
 	ResponseHandler(res, "success", 200, {
-		orders,
 		message: "Retrieve data successfully!",
+		orders,
 	});
 });
 
@@ -33,8 +33,8 @@ export const totalCustomersOrder = asyncErrorHandler(async (req, res) => {
 	const totalOrders = req.data;
 
 	ResponseHandler(res, "success", 200, {
-		totalOrders,
 		message: "Retrieve data successfully!",
+		totalOrders,
 	});
 });
 
@@ -42,7 +42,18 @@ export const totalRevenue = asyncErrorHandler(async (req, res) => {
 	const revenue = req.data;
 
 	ResponseHandler(res, "success", 200, {
-		revenue,
 		message: "Retrieve data successfully!",
+		revenue,
+	});
+});
+
+export const deleteCustomersOrder = asyncErrorHandler(async (req, res) => {
+	const { id } = req.data;
+
+	const result = await orderService.deleteOrder(id);
+
+	ResponseHandler(res, "sucess", 200, {
+		message: "Deleted data successfully!",
+		result,
 	});
 });

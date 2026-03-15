@@ -151,7 +151,7 @@ export const retrieveAdminData = async () => {
 			tableBody.querySelectorAll(".delete-button").forEach((btn) => {
 				btn.addEventListener("click", async () => {
 					const productId = btn.getAttribute("data-product-id");
-					await deleteProductAPI(productId, accessToken);
+					await deleteProductAPI(productId);
 					retrieveAdminData();
 				});
 			});
