@@ -498,7 +498,7 @@ body {
 
 .order-customer-name {
 	display: inline-block;
-	max-width: 140px;
+	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -588,7 +588,7 @@ body {
 }
 
 .col-date {
-	width: 160px;
+	min-width: 160px;
 }
 
 .col-actions {

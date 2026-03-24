@@ -48,7 +48,6 @@
 				<a href="./login.html" class="sidebar-logout"> <span>🚪</span> Logout </a>
 			</div>
 		</aside>
-
 		<!-- MAIN CONTENT -->
 		<div class="admin-layout">
 			<!-- TOP BAR -->
@@ -113,12 +112,12 @@
 							<span class="search-icon">🔍</span>
 							<input
 								type="text"
-								id="searchOrders"
+								id="searchCustomers"
 								placeholder="Search products..."
 								autocomplete="off" />
 						</div>
 						<div class="toolbar-actions">
-							<select id="sortOrders" class="toolbar-select">
+							<select id="sortCustomersName" class="toolbar-select">
 								<option value="">Sort by...</option>
 								<option value="name-asc">Name A–Z</option>
 								<option value="name-desc">Name Z–A</option>
@@ -133,13 +132,12 @@
 								<tr>
 									<th class="col-id">ID</th>
 									<th class="col-customer">Customer</th>
-									<th class="col-purchased-products">Purchased Products | Total Quantity</th>
-									<th class="col-status">Status</th>
-									<th class="col-date">Added</th>
+									<th class="col-email">Email</th>
+									<th class="col-date">Date Created</th>
 									<th class="col-actions">Actions</th>
 								</tr>
 							</thead>
-							<tbody id="ordersTableBody">
+							<tbody id="customersTableBody">
 								<!-- Rows injected by JS via GET /api/order/data -->
 							</tbody>
 						</table>
@@ -148,23 +146,6 @@
 				</section>
 			</main>
 		</div>
-
-		<!-- Status change confirmation modal -->
-		<div class="modal-overlay" id="statusChangeModal" aria-hidden="true">
-			<div class="modal modal-sm">
-				<div class="modal-header">
-					<h3>Change status</h3>
-				</div>
-				<div class="modal-body">
-					<p class="delete-confirm-text">Are you sure you want to change the current status?</p>
-					<div class="modal-actions modal-actions--full">
-						<button type="button" class="btn-modal-confirm" id="statusModalYes">Yes</button>
-						<button type="button" class="btn-modal-cancel" id="statusModalNo">No</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<script defer type="module" src="../js/orders.js"></script>
+		<script defer type="module" src="../js/customers.js"></script>
 	</body>
 </html>
