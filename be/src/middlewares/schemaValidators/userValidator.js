@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import * as userService from "../../services/user.service.js";
 import ErrorHandler from "../../helpers/errorHandler.js";
 import userSchema from "../../schemas/user.schema.js";
+import validateObjectId from "../../helpers/validateObjectId.js";
 
 export const validateSignup = asyncErrorHandler(async (req, res, next) => {
 	const responseSchema = await userSchema.safeParseAsync(req.body);
@@ -77,6 +78,20 @@ export const validateRetrieveUserData = asyncErrorHandler(async (req, res, next)
 	next();
 });
 
+export const validateRetrieveCustomers = asyncErrorHandler(async (req, res, next) => {
+	const { data } = req;
+
+	if (!data) {
+		ErrorHandler("No data found", 404);
+	}
+
+	const customers = await userService.retrieveCustomers();
+
+	req.data = customers;
+
+	next();
+});
+
 export const validateRetrieveAdminData = asyncErrorHandler(async (req, res, next) => {
 	const { data } = req;
 
@@ -89,6 +104,18 @@ export const validateRetrieveAdminData = asyncErrorHandler(async (req, res, next
 	req.data = {
 		data,
 		totalCustomers,
+	};
+
+	next();
+});
+
+export const validateDeleteCustomerData = asyncErrorHandler(async (req, res, next) => {
+	const { id } = req.params;
+
+	validateObjectId(id);
+
+	req.data = {
+		id,
 	};
 
 	next();
