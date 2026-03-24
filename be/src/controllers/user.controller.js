@@ -52,6 +52,15 @@ export const retrieveUserData = asyncErrorHandler(async (req, res) => {
 	});
 });
 
+export const retrieveCustomers = asyncErrorHandler(async (req, res) => {
+	const data = req.data;
+
+	ResponseHandler(res, "success", 200, {
+		data,
+		message: "Created successfully",
+	});
+});
+
 export const retrieveAdminData = asyncErrorHandler(async (req, res) => {
 	const { data, totalCustomers } = req.data;
 
@@ -59,5 +68,14 @@ export const retrieveAdminData = asyncErrorHandler(async (req, res) => {
 		data,
 		totalCustomers,
 		message: "Created successfully",
+	});
+});
+
+export const deleteCustomerData = asyncErrorHandler(async (req, res) => {
+	const { id } = req.data;
+
+	await userService.deleteCustomer(id);
+	ResponseHandler(res, "sucess", 200, {
+		message: "Deleted customer successfully!",
 	});
 });
