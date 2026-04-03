@@ -1,8 +1,5 @@
-import {
-	createNewOrderAPI,
-	retrieveUserDataAPI,
-	retrieveMenuAPI,
-} from "../api/homepageAPI/homepageData.js";
+import { createNewOrderAPI, retrieveUserDataAPI, retrieveMenuAPI } from "../api/homepageAPI/homepageData.js";
+import { notifyOrdersChanged } from "../utils/orderBroadcast.js";
 import renderMenus from "../helpers/homepage/renderMenuHelper.js";
 
 const navUsername = document.getElementById("navUsername");
@@ -56,7 +53,8 @@ const createNewOrder = async (purchasedProducts) => {
 		return;
 	}
 
-	await createNewOrderAPI(purchasedProducts, totalAmount);
+	const created = await createNewOrderAPI(purchasedProducts, totalAmount);
+	if (created) notifyOrdersChanged();
 
 	displayOrderTotalAmount.textContent = `₱${(0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
@@ -143,7 +141,7 @@ const placeOrderButton = () => {
 	navCartSidebarModalCountdown.textContent = count;
 	navCartSidebarAddMore.classList.remove("is-hidden");
 
-	modalCountdown = setInterval(() => {
+	modalCountdown = setInterval(async () => {
 		count--;
 		navCartSidebarModalCountdown.textContent = count;
 
@@ -175,12 +173,12 @@ const modalPlaceOrderYesButton = () => {
 	navCartSidebarAddMore.classList.add("is-hidden");
 };
 
-const modalPlaceOrderNoButton = () => {
+const modalPlaceOrderNoButton = async () => {
 	if (modalCountdown) {
 		clearInterval(modalCountdown);
 		modalCountdown = null;
 	}
-	createNewOrder(cart);
+	await createNewOrder(cart);
 	cart = [];
 	renderCartSidebar();
 	updateCartBadge();

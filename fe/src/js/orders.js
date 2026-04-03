@@ -12,6 +12,7 @@ import {
 } from "../api/ordersAPI/ordersAPI.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 import formatData from "../utils/formatDate.js";
+import { notifyOrdersChanged } from "../utils/orderBroadcast.js";
 
 // stats elements
 const navbarName = document.getElementById("navbarName");
@@ -207,7 +208,8 @@ const retrieveOrdersDataHandler = async () => {
 		// Update the prev-status to the new value for next time
 		if (activeOrderButton) {
 			const userId = activeOrderButton.getAttribute("data-order-id");
-			await updateOrderDataAPI(userId, activeOrderButton.value);
+			const ok = await updateOrderDataAPI(userId, activeOrderButton.value);
+			if (ok) notifyOrdersChanged();
 		}
 
 		activeOrderButton = null;
@@ -233,7 +235,8 @@ const retrieveOrdersDataHandler = async () => {
 		button?.addEventListener("click", async () => {
 			const orderId = button.getAttribute("data-order-id");
 
-			await deleteOrderDataAPI(orderId);
+			const ok = await deleteOrderDataAPI(orderId);
+			if (ok) notifyOrdersChanged();
 
 			retrieveOrdersDataHandler();
 		});
