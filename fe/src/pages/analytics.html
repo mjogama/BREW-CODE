@@ -7,7 +7,6 @@
 		<link rel="stylesheet" href="../styles/admin.css" />
 	</head>
 	<body>
-		<!-- SIDEBAR -->
 		<aside class="sidebar" id="sidebar">
 			<div class="sidebar-logo">Brew<span> & Code</span></div>
 			<nav class="sidebar-nav">
@@ -31,7 +30,7 @@
 						</a>
 					</li>
 					<li class="sidebar-nav-item">
-						<a href="./analytics.html">
+						<a href="#analytics">
 							<span class="nav-icon">📊</span>
 							<span>Analytics</span>
 						</a>
@@ -48,8 +47,6 @@
 				<a href="./login.html" class="sidebar-logout"> <span>🚪</span> Logout </a>
 			</div>
 		</aside>
-
-		<!-- MAIN CONTENT -->
 		<div class="admin-layout">
 			<!-- TOP BAR -->
 			<header class="topbar">
@@ -97,74 +94,13 @@
 						</div>
 					</div>
 				</div>
-
-				<!-- ORDERS SECTION -->
-				<section class="admin-section" id="products">
-					<div class="section-header">
-						<div>
-							<h2>Orders</h2>
-							<p>Manage your sweet orders</p>
-						</div>
-					</div>
-
-					<!-- SEARCH & FILTER BAR -->
-					<div class="table-toolbar">
-						<div class="search-box">
-							<span class="search-icon">🔍</span>
-							<input
-								type="text"
-								id="searchOrders"
-								placeholder="Search products..."
-								autocomplete="off" />
-						</div>
-						<div class="toolbar-actions">
-							<select id="sortOrders" class="toolbar-select">
-								<option value="">Sort by...</option>
-								<option value="name-asc">Name A–Z</option>
-								<option value="name-desc">Name Z–A</option>
-							</select>
-						</div>
-					</div>
-
-					<!-- ORDERS TABLE -->
-					<div class="table-wrapper">
-						<table class="data-table" id="ordersTable">
-							<thead>
-								<tr>
-									<th class="col-id">ID</th>
-									<th class="col-customer">Customer</th>
-									<th class="col-purchased-products">Purchased Products | Total Quantity</th>
-									<th class="col-status">Status</th>
-									<th class="col-date">Added</th>
-									<th class="col-actions">Actions</th>
-								</tr>
-							</thead>
-							<tbody id="ordersTableBody">
-								<!-- Rows injected by JS via GET /api/order/data -->
-							</tbody>
-						</table>
-					</div>
-					<div class="table-footer" id="tableCountBodyOrders"></div>
-				</section>
+				<div style="width: 60%; display: flex; justify-content: space-between; align-items: center">
+					<canvas id="productGraph"></canvas>
+					<canvas id="myChartT"></canvas>
+				</div>
 			</main>
 		</div>
-
-		<!-- Status change confirmation modal -->
-		<div class="modal-overlay" id="statusChangeModal" aria-hidden="true">
-			<div class="modal modal-sm">
-				<div class="modal-header">
-					<h3>Change status</h3>
-				</div>
-				<div class="modal-body">
-					<p class="delete-confirm-text">Are you sure you want to change the current status?</p>
-					<div class="modal-actions modal-actions--full">
-						<button type="button" class="btn-modal-confirm" id="statusModalYes">Yes</button>
-						<button type="button" class="btn-modal-cancel" id="statusModalNo">No</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<script defer type="module" src="../js/orders.js"></script>
+		<script defer type="module" src="../js/analytics.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	</body>
 </html>
