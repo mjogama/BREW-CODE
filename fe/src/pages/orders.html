@@ -111,11 +111,7 @@
 					<div class="table-toolbar">
 						<div class="search-box">
 							<span class="search-icon">🔍</span>
-							<input
-								type="text"
-								id="searchOrders"
-								placeholder="Search products..."
-								autocomplete="off" />
+							<input type="text" id="searchOrders" placeholder="Search products..." autocomplete="off" />
 						</div>
 						<div class="toolbar-actions">
 							<select id="sortOrders" class="toolbar-select">
@@ -144,7 +140,13 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="table-footer" id="tableCountBodyOrders"></div>
+					<div class="table-footer-wrapper">
+						<div class="table-footer" id="tableCountBodyOrders"></div>
+						<div class="table-footer-buttons" id="customersPagination">
+							<button type="button" class="footer-button" aria-label="Previous page" data-number="-1">Previous</button>
+							<button type="button" class="footer-button" aria-label="Next page" data-number="1">Next</button>
+						</div>
+					</div>
 				</section>
 			</main>
 		</div>

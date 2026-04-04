@@ -16,6 +16,12 @@ export const retrieveTotalCustomer = async () => {
 	return await UserModel.countDocuments();
 };
 
+export const retrievePaginatedCustomers = async (page) => {
+	const limit = 8;
+	const skip = (page - 1) * limit;
+	return await UserModel.find({}).skip(skip).limit(limit);
+};
+
 export const deleteCustomer = async (id) => {
 	return await UserModel.findOneAndDelete({ _id: id });
 };

@@ -48,6 +48,18 @@ export const retrieveTotalProducts = asyncErrorHandler(async (req, res) => {
 	});
 });
 
+export const retrievePaginatedProducts = asyncErrorHandler(async (req, res) => {
+	const { number } = req.data;
+
+	const data = await productService.retrievePaginatedProducts(number);
+
+	ResponseHandler(res, "success", 200, {
+		data,
+		number,
+		message: `Retrieve page ${number} successfully`,
+	});
+});
+
 export const updateProductById = asyncErrorHandler(async (req, res) => {
 	const { id } = req.data;
 

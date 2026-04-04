@@ -101,7 +101,7 @@
 				<section class="admin-section" id="products">
 					<div class="section-header">
 						<div>
-							<h2>Orders</h2>
+							<h2>Customers</h2>
 							<p>Manage your sweet orders</p>
 						</div>
 					</div>
@@ -110,11 +110,7 @@
 					<div class="table-toolbar">
 						<div class="search-box">
 							<span class="search-icon">🔍</span>
-							<input
-								type="text"
-								id="searchCustomers"
-								placeholder="Search products..."
-								autocomplete="off" />
+							<input type="text" id="searchCustomers" placeholder="Search products..." autocomplete="off" />
 						</div>
 						<div class="toolbar-actions">
 							<select id="sortCustomersName" class="toolbar-select">
@@ -142,7 +138,13 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="table-footer" id="tableCountBodyOrders"></div>
+					<div class="table-footer-wrapper">
+						<div class="table-footer" id="tableCountBodyOrders"></div>
+						<div class="table-footer-buttons" id="customersPagination">
+							<button type="button" class="footer-button" aria-label="Previous page" data-number="-1">Previous</button>
+							<button type="button" class="footer-button" aria-label="Next page" data-number="1">Next</button>
+						</div>
+					</div>
 				</section>
 			</main>
 		</div>

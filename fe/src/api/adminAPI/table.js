@@ -1,9 +1,9 @@
 import { BASE_URL } from "../../constants/url/baseURL.js";
 import { PRODUCTS } from "../../constants/endpoints/adminPath.js";
 
-export const createNewProductAPI = async (productData) => {
-	const accessToken = sessionStorage.getItem("accessToken");
+const accessToken = sessionStorage.getItem("accessToken");
 
+export const createNewProductAPI = async (productData) => {
 	const res = await fetch(`${BASE_URL.baseURL}${PRODUCTS.createNewProduct}`, {
 		headers: {
 			"Content-Type": "application/json",
@@ -21,6 +21,27 @@ export const createNewProductAPI = async (productData) => {
 	const data = await res.json();
 
 	return data.details;
+};
+
+export const retrievePaginatedCustomersAPI = async (number) => {
+	if (!accessToken) {
+		window.location.href = "./login.html";
+		return;
+	}
+
+	const res = await fetch(`${BASE_URL.baseURL}${PRODUCTS.paginated}?number=${number}`, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!res.ok) {
+		return console.error("Couldn't fetch paganated customers.");
+	}
+
+	const data = await res.json();
+
+	return data.details.data;
 };
 
 export const retrieveProductsAPI = async () => {

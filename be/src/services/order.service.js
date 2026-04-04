@@ -63,6 +63,43 @@ export const productsSold = async () => {
 	]);
 };
 
+export const retrievePaginatedOrders = async (page) => {
+	const limit = 8;
+	const skip = (page - 1) * limit;
+	return await OrderModel.aggregate([
+		{
+			$lookup: {
+				from: "brew-code-users",
+				localField: "userId",
+				foreignField: "_id",
+				as: "user",
+			},
+		},
+		{
+			$unwind: "$user",
+		},
+		{
+			$project: {
+				"user.email": 0,
+				"user.password": 0,
+				"user.agreeTerms": 0,
+				"user.role": 0,
+				"user.createdAt": 0,
+				"user.updatedAt": 0,
+			},
+		},
+		{
+			$sort: { createdAt: -1 },
+		},
+		{
+			$skip: skip,
+		},
+		{
+			$limit: limit,
+		},
+	]);
+};
+
 export const updateOrderStatus = async (id, reqBody) => {
 	return await OrderModel.findOneAndUpdate({ _id: id }, reqBody, { returnDocument: "after" });
 };
