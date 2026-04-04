@@ -1,15 +1,6 @@
-import {
-	retrieveTotalProductsAPI,
-	retriveTotalOrdersAPI,
-	retrieveTotalCustomersAPI,
-	retriveTotalRevenueAPI,
-} from "../api/adminAPI/stats.js";
+import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomersAPI, retriveTotalRevenueAPI } from "../api/adminAPI/stats.js";
 import animateCount from "../utils/animateCount.js";
-import {
-	retrieveOrdersDataAPI,
-	updateOrderDataAPI,
-	deleteOrderDataAPI,
-} from "../api/ordersAPI/ordersAPI.js";
+import { retrieveOrdersDataAPI, retrievePaginatedCustomersAPI, updateOrderDataAPI, deleteOrderDataAPI } from "../api/ordersAPI/ordersAPI.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 import formatData from "../utils/formatDate.js";
 import { notifyOrdersChanged } from "../utils/orderBroadcast.js";
@@ -21,13 +12,16 @@ const totalOrdersEl = document.getElementById("totalOrders");
 const totalCustomersEl = document.getElementById("totalCustomers");
 const totalRevenueEl = document.getElementById("totalRevenue");
 
-const retrieveOrdersDataHandler = async () => {
-	const ordersTableBody = document.getElementById("ordersTableBody");
-	const statusChangeModal = document.getElementById("statusChangeModal");
-	const tableCountBodyOrders = document.getElementById("tableCountBodyOrders");
-	const sortOrders = document.getElementById("sortOrders");
+const ordersTableBody = document.getElementById("ordersTableBody");
+const statusChangeModal = document.getElementById("statusChangeModal");
+const tableCountBodyOrders = document.getElementById("tableCountBodyOrders");
+const searchOrders = document.getElementById("searchOrders");
+const sortOrders = document.getElementById("sortOrders");
 
-	// stats data
+let pageNumber = 1;
+let isMaximumPage = pageNumber - 1;
+
+const retrieveStatsData = async () => {
 	const totalProducts = await retrieveTotalProductsAPI();
 	const totalOrders = await retriveTotalOrdersAPI();
 	const totalCustomers = await retrieveTotalCustomersAPI();
@@ -40,33 +34,25 @@ const retrieveOrdersDataHandler = async () => {
 	animateCount(totalOrdersEl, totalOrders ?? 0);
 	animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
 	animateCount(totalRevenueEl, totalRevenue ?? 0);
+};
 
-	const data = await retrieveOrdersDataAPI();
+const retrieveOrdersDataHandler = async () => {
+	const paginatedOrders = await retrievePaginatedCustomersAPI(pageNumber);
 
-	const orders = data.details.orders || [];
-	const user = orders.map((user) => user.fullName);
-
-	sortOrders?.addEventListener("click", () => {
-		if (sortOrders.value === "name-asc") {
-			// orders.sort((a, b) => a.fullName.localeCompare(b.user.fullName));
-			console.log(orders);
-			console.log(user);
-		} else {
-			orders.sort((a, b) => b.user.fullName.localeCompare(a.user.fullName));
-		}
-	});
-
-	tableCountBodyOrders.innerHTML = `
-		<span class="table-count" id="tableCount">Showing ${orders.length ?? 0} products</span>
-	`;
+	const orders = paginatedOrders || [];
 
 	if (orders.length === 0) {
+		if (pageNumber > 1) {
+			pageNumber--;
+			await retrieveOrdersDataHandler();
+			return;
+		}
 		ordersTableBody.innerHTML = `
 			<tr class="table-empty-row">
 				<td colspan="6">
 					<div class="empty-state">
 						<span class="empty-icon">📭</span>
-						<p>No products yet. Add your first product above.</p>
+						<p>No Orders yet.</p>
 					</div>
 				</td>
 			</tr>
@@ -83,7 +69,7 @@ const retrieveOrdersDataHandler = async () => {
 				</div>
 			</td>
 			<td>
-          		<span class="order-customer-name">${regexHTMLHandler(order.user.fullName)}</span>
+          		<span class="order-customer-name">${regexHTMLHandler(order.user.fullName || order.fullName)}</span>
         	</td>
        		<td>
           		<div class="order-products-cell">
@@ -155,7 +141,32 @@ const retrieveOrdersDataHandler = async () => {
 				.join("");
 		};
 		renderOrdersTable(orders);
+
+		searchOrders?.addEventListener("input", () => {
+			const customerName = searchOrders.value.toLowerCase();
+			const filteredCustomerName =
+				customerName === ""
+					? orders
+					: orders.filter((name) => {
+							return name.user.fullName.toLowerCase().includes(customerName);
+						});
+			renderOrdersTable(filteredCustomerName);
+		});
+
+		sortOrders?.addEventListener("click", () => {
+			if (sortOrders.value === "name-asc") {
+				const ordersCustomerNameAZ = orders.sort((a, b) => a.user.fullName.localeCompare(b.user.fullName));
+				renderOrdersTable(ordersCustomerNameAZ);
+			} else {
+				const ordersCustomerNameZA = orders.sort((a, b) => b.user.fullName.localeCompare(a.user.fullName));
+				renderOrdersTable(ordersCustomerNameZA);
+			}
+		});
 	}
+
+	tableCountBodyOrders.innerHTML = `
+		<span class="table-count" id="tableCount">Page No. ${pageNumber} of orders</span>
+	`;
 
 	const toggleButtons = document.querySelectorAll(".order-products-toggle-btn");
 	const orderStatusSelects = document.querySelectorAll(".order-status-select");
@@ -221,11 +232,6 @@ const retrieveOrdersDataHandler = async () => {
 		if (activeOrderButton) {
 			// Revert to previous status
 			activeOrderButton.value = previousStatus;
-
-			// // Optional: reset to default if no previous status
-			// if (!previousStatus) {
-			//   activeOrderButton.selectedIndex = 0;
-			// }
 		}
 
 		activeOrderButton = null;
@@ -246,4 +252,21 @@ const retrieveOrdersDataHandler = async () => {
 	statusModalNoButton?.addEventListener("click", statusModalNoHandler);
 };
 
-retrieveOrdersDataHandler();
+const tableFooterButtons = document.querySelectorAll(".footer-button");
+
+tableFooterButtons.forEach((btn) => {
+	btn.addEventListener("click", async () => {
+		const data = btn.getAttribute("data-number");
+		pageNumber += Number(data);
+
+		if (pageNumber === 0) {
+			pageNumber++;
+			Math.ceil((isMaximumPage -= 1.5));
+		}
+
+		await retrieveOrdersDataHandler();
+	});
+});
+
+await retrieveStatsData();
+await retrieveOrdersDataHandler();

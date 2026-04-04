@@ -1,8 +1,9 @@
 export const ORDERS = {
-  // GET
-  retrieveOrdersDataPath: "/order",
-  // PATCH
-  updateOrdersDataPath: "/order/update",
-  // DELETE
-  deleteOrderDataPath: "/order/delete",
+	// GET
+	retrieveOrdersDataPath: "/order",
+	paginated: "/order/page",
+	// PATCH
+	updateOrdersDataPath: "/order/update",
+	// DELETE
+	deleteOrderDataPath: "/order/delete",
 };

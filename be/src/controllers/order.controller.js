@@ -56,6 +56,18 @@ export const productsSold = asyncErrorHandler(async (req, res) => {
 	});
 });
 
+export const retrievePaginatedOrders = asyncErrorHandler(async (req, res) => {
+	const { number } = req.data;
+
+	const data = await orderService.retrievePaginatedOrders(number);
+
+	ResponseHandler(res, "success", 200, {
+		data,
+		number,
+		message: `Retrieve page ${number} successfully`,
+	});
+});
+
 export const updateCustomerOrderById = asyncErrorHandler(async (req, res) => {
 	const { id } = req.data;
 

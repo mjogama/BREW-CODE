@@ -1,6 +1,6 @@
 export const CUSTOMER = {
 	// GET
-	customers: "/user/customers",
+	paginated: "/user/page",
 	// DELETE
 	customerId: "/user/delete",
 };

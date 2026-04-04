@@ -1,10 +1,5 @@
-import {
-	retrieveTotalProductsAPI,
-	retriveTotalOrdersAPI,
-	retrieveTotalCustomersAPI,
-	retriveTotalRevenueAPI,
-} from "../api/adminAPI/stats.js";
-import { retrieveCustomersAPI, deleteCustomerDataAPI } from "../api/customersAPI/customersData.js";
+import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomersAPI, retriveTotalRevenueAPI } from "../api/adminAPI/stats.js";
+import { retrievePaginatedCustomersAPI, deleteCustomerDataAPI } from "../api/customersAPI/customersData.js";
 import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
@@ -19,13 +14,16 @@ const totalRevenueEl = document.getElementById("totalRevenue");
 const searchCustomers = document.getElementById("searchCustomers");
 const sortCustomersName = document.getElementById("sortCustomersName");
 const customersTableBody = document.getElementById("customersTableBody");
+const tableCountBodyOrders = document.getElementById("tableCountBodyOrders");
 
-const retrieveCustomersDataHandler = async () => {
+let pageNumber = 1;
+let isMaximumPage = pageNumber - 1;
+
+const retrieveStatsData = async () => {
 	const totalProducts = await retrieveTotalProductsAPI();
 	const totalOrders = await retriveTotalOrdersAPI();
 	const totalCustomers = await retrieveTotalCustomersAPI();
 	const totalRevenue = await retriveTotalRevenueAPI();
-	const customersResult = await retrieveCustomersAPI();
 
 	navbarName.textContent = totalCustomers.data.fullName;
 
@@ -34,10 +32,21 @@ const retrieveCustomersDataHandler = async () => {
 	animateCount(totalOrdersEl, totalOrders ?? 0);
 	animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
 	animateCount(totalRevenueEl, totalRevenue ?? 0);
+};
 
-	const customers = customersResult || [];
+const retrieveCustomersDataHandler = async () => {
+	const paginatedCustomers = await retrievePaginatedCustomersAPI(pageNumber);
+
+	const customers = paginatedCustomers || [];
 
 	if (customers.length === 0) {
+		// Empty page: only step back when we are past page 1 (e.g. overshoot or last row deleted).
+		// On page 1 with zero total customers, keep pageNumber at 1 — do not go to 0 or negative.
+		if (pageNumber > 1) {
+			pageNumber--;
+			await retrieveCustomersDataHandler();
+			return;
+		}
 		customersTableBody.innerHTML = `
 			<tr class="table-empty-row">
 				<td colspan="5">
@@ -101,14 +110,10 @@ const retrieveCustomersDataHandler = async () => {
 			e.preventDefault();
 
 			if (sortCustomersName.value === "name-asc") {
-				const customerNameAZ = customers.sort((a, b) =>
-					a.fullName.localeCompare(b.fullName.localeCompare),
-				);
+				const customerNameAZ = customers.sort((a, b) => a.fullName.localeCompare(b.fullName.localeCompare));
 				renderCustomersTable(customerNameAZ);
 			} else {
-				const customerNameZA = customers.sort((a, b) =>
-					b.fullName.localeCompare(a.fullName.localeCompare),
-				);
+				const customerNameZA = customers.sort((a, b) => b.fullName.localeCompare(a.fullName.localeCompare));
 				renderCustomersTable(customerNameZA);
 			}
 		});
@@ -123,8 +128,25 @@ const retrieveCustomersDataHandler = async () => {
 	}
 
 	tableCountBodyOrders.innerHTML = `
-		<span class="table-count" id="tableCount">Showing ${customers.length ?? 0} products</span>
+		<span class="table-count" id="tableCount">Page No. ${pageNumber} of customers</span>
 	`;
 };
 
+const tableFooterButtons = document.querySelectorAll(".footer-button");
+
+tableFooterButtons.forEach((btn) => {
+	btn.addEventListener("click", async () => {
+		const data = btn.getAttribute("data-number");
+		pageNumber += Number(data);
+
+		if (pageNumber === 0) {
+			pageNumber++;
+			Math.ceil((isMaximumPage -= 1.5));
+		}
+
+		await retrieveCustomersDataHandler();
+	});
+});
+
+retrieveStatsData();
 retrieveCustomersDataHandler();

@@ -112,11 +112,7 @@
 					<div class="table-toolbar">
 						<div class="search-box">
 							<span class="search-icon">🔍</span>
-							<input
-								type="text"
-								id="searchProducts"
-								placeholder="Search products..."
-								autocomplete="off" />
+							<input type="text" id="searchProducts" placeholder="Search products..." autocomplete="off" />
 						</div>
 						<div class="toolbar-actions">
 							<select id="sortProducts" class="toolbar-select">
@@ -143,18 +139,19 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="table-footer" id="tableCountBody"></div>
+					<div class="table-footer-wrapper">
+						<div class="table-footer" id="tableCountBodyProducts"></div>
+						<div class="table-footer-buttons" id="customersPagination">
+							<button type="button" class="footer-button" aria-label="Previous page" data-number="-1">Previous</button>
+							<button type="button" class="footer-button" aria-label="Next page" data-number="1">Next</button>
+						</div>
+					</div>
 				</section>
 			</main>
 		</div>
 
 		<!-- ADD PRODUCT MODAL -->
-		<div
-			class="modal-overlay"
-			id="addProductModal"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="addModalTitle">
+		<div class="modal-overlay" id="addProductModal" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
 			<div class="modal">
 				<div class="modal-header">
 					<h3 id="addModalTitle">Add New Product</h3>
@@ -167,47 +164,23 @@
 						</div>
 						<div class="modal-input-group">
 							<label for="newProductEmoji">Emoji</label>
-							<input
-								type="text"
-								id="newProductEmoji"
-								name="emoji"
-								placeholder="e.g. ☕"
-								autocomplete="off" />
+							<input type="text" id="newProductEmoji" name="emoji" placeholder="e.g. ☕" autocomplete="off" />
 						</div>
 						<div class="modal-input-group">
 							<label for="newProductName">Name</label>
-							<input
-								type="text"
-								id="newProductName"
-								name="name"
-								placeholder="e.g. Dark Chocolate Truffles"
-								autocomplete="off" />
+							<input type="text" id="newProductName" name="name" placeholder="e.g. Dark Chocolate Truffles" autocomplete="off" />
 						</div>
 						<div class="modal-input-group">
 							<label for="newProductDesc">Description</label>
-							<input
-								type="text"
-								id="newProductDesc"
-								name="desc"
-								placeholder="Product description"
-								autocomplete="off" />
+							<input type="text" id="newProductDesc" name="desc" placeholder="Product description" autocomplete="off" />
 						</div>
 						<div class="modal-input-group">
 							<label for="newProductPrice">Price</label>
-							<input
-								type="number"
-								id="newProductPrice"
-								name="price"
-								placeholder="0.00"
-								step="0.01"
-								min="0"
-								autocomplete="off" />
+							<input type="number" id="newProductPrice" name="price" placeholder="0.00" step="0.01" min="0" autocomplete="off" />
 						</div>
 						<div class="modal-actions">
 							<button type="button" class="btn-modal-cancel" id="cancelAddProduct">Cancel</button>
-							<button type="submit" class="btn-modal-confirm" id="confirmAddProduct">
-								Add Product
-							</button>
+							<button type="submit" class="btn-modal-confirm" id="confirmAddProduct">Add Product</button>
 						</div>
 					</form>
 				</div>
@@ -215,12 +188,7 @@
 		</div>
 
 		<!-- EDIT PRODUCT MODAL -->
-		<div
-			class="modal-overlay"
-			id="editProductModal"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="editModalTitle">
+		<div class="modal-overlay" id="editProductModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
 			<div class="modal">
 				<div class="modal-header">
 					<h3 id="editModalTitle">Edit Product</h3>
@@ -231,19 +199,12 @@
 						<input type="hidden" id="editProductId" name="id" />
 						<div class="modal-input-group">
 							<label for="editProductName">Product Name</label>
-							<input
-								type="text"
-								id="editProductName"
-								name="productName"
-								placeholder="Enter new product name"
-								autocomplete="off" />
+							<input type="text" id="editProductName" name="productName" placeholder="Enter new product name" autocomplete="off" />
 							<span class="modal-error" id="editProductError"></span>
 						</div>
 						<div class="modal-actions">
 							<button type="button" class="btn-modal-cancel" id="cancelEditProduct">Cancel</button>
-							<button type="submit" class="btn-modal-confirm" id="confirmEditProduct">
-								Save Changes
-							</button>
+							<button type="submit" class="btn-modal-confirm" id="confirmEditProduct">Save Changes</button>
 						</div>
 					</form>
 				</div>
@@ -251,24 +212,14 @@
 		</div>
 
 		<!-- DELETE CONFIRM MODAL -->
-		<div
-			class="modal-overlay"
-			id="deleteProductModal"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="deleteModalTitle">
+		<div class="modal-overlay" id="deleteProductModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
 			<div class="modal modal-sm">
 				<div class="modal-header">
 					<h3 id="deleteModalTitle">Delete Product</h3>
-					<button class="modal-close" id="closeDeleteProductModal" aria-label="Close modal">
-						✕
-					</button>
+					<button class="modal-close" id="closeDeleteProductModal" aria-label="Close modal">✕</button>
 				</div>
 				<div class="modal-body">
-					<p class="delete-confirm-text">
-						Are you sure you want to delete <strong id="deleteProductName">"Product Name"</strong>?
-						This action cannot be undone.
-					</p>
+					<p class="delete-confirm-text">Are you sure you want to delete <strong id="deleteProductName">"Product Name"</strong>? This action cannot be undone.</p>
 					<input type="hidden" id="deleteProductId" />
 					<div class="modal-actions">
 						<button type="button" class="btn-modal-cancel" id="cancelDeleteProduct">Cancel</button>

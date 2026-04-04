@@ -1,12 +1,15 @@
 export const PRODUCTS = {
-	// stats api
+	// POST
+	createNewProduct: "/product/new",
+	// GET
 	admin: "/user/admin",
 	totalOrders: "/order/totalOrders",
 	totalRevenue: "/order/revenue",
-	// table api
-	createNewProduct: "/product/new",
+	paginated: "/product/page",
 	retrieveProducts: "/product",
 	retrieveTotalProducts: "/product/total-products",
+	// UPDATE
 	updateProduct: "/product/edit",
+	// DELETE
 	deleteProduct: "/product/delete",
 };

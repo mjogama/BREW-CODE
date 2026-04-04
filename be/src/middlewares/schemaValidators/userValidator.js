@@ -109,6 +109,20 @@ export const validateRetrieveAdminData = asyncErrorHandler(async (req, res, next
 	next();
 });
 
+export const validatePaginatedCustomers = asyncErrorHandler(async (req, res, next) => {
+	const { number } = req.query;
+
+	if (!number) {
+		ErrorHandler("Page not found", 404);
+	}
+
+	req.data = {
+		number,
+	};
+
+	next();
+});
+
 export const validateDeleteCustomerData = asyncErrorHandler(async (req, res, next) => {
 	const { id } = req.params;
 

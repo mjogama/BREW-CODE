@@ -1,15 +1,5 @@
-import {
-	retrieveTotalProductsAPI,
-	retriveTotalOrdersAPI,
-	retrieveTotalCustomersAPI,
-	retriveTotalRevenueAPI,
-} from "../api/adminAPI/stats.js";
-import {
-	createNewProductAPI,
-	retrieveProductsAPI,
-	updateProductAPI,
-	deleteProductAPI,
-} from "../api/adminAPI/table.js";
+import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomersAPI, retriveTotalRevenueAPI } from "../api/adminAPI/stats.js";
+import { createNewProductAPI, retrievePaginatedCustomersAPI, retrieveProductsAPI, updateProductAPI, deleteProductAPI } from "../api/adminAPI/table.js";
 import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
@@ -40,7 +30,10 @@ const sortProducts = document.getElementById("sortProducts");
 
 // table products elements
 const tableBody = document.getElementById("productsTableBody");
-const tableCountBody = document.getElementById("tableCountBody");
+const tableCountBodyProducts = document.getElementById("tableCountBodyProducts");
+
+let pageNumber = 1;
+let isMaximumPage = pageNumber - 1;
 
 export const retrieveAdminData = async () => {
 	const accessToken = sessionStorage.getItem("accessToken");
@@ -54,6 +47,7 @@ export const retrieveAdminData = async () => {
 	const totalOrders = await retriveTotalOrdersAPI();
 	const totalCustomers = await retrieveTotalCustomersAPI();
 	const totalRevenue = await retriveTotalRevenueAPI();
+	const paginatedProducts = await retrievePaginatedCustomersAPI(1);
 
 	navbarName.textContent = totalCustomers.data.fullName;
 
@@ -65,7 +59,7 @@ export const retrieveAdminData = async () => {
 
 	const data = await retrieveProductsAPI();
 
-	const products = data.details.data || [];
+	const products = paginatedProducts || [];
 
 	if (products.length === 0) {
 		tableBody.innerHTML = `
@@ -111,10 +105,7 @@ export const retrieveAdminData = async () => {
 
 		searchProducts?.addEventListener("input", () => {
 			const keyword = searchProducts.value.toLowerCase();
-			const filteredProducts =
-				keyword === ""
-					? products
-					: products.filter((product) => product.name.toLowerCase().includes(keyword));
+			const filteredProducts = keyword === "" ? products : products.filter((product) => product.name.toLowerCase().includes(keyword));
 			renderProductRows(filteredProducts);
 			attachRowListeners();
 		});
@@ -160,8 +151,8 @@ export const retrieveAdminData = async () => {
 		attachRowListeners();
 	}
 
-	tableCountBody.innerHTML = `
-		<span class="table-count" id="tableCount">Showing ${totalProducts ?? 0} products</span>
+	tableCountBodyProducts.innerHTML = `
+		<span class="table-count" id="tableCount">Page No. ${pageNumber} of products</span>
 	`;
 };
 
@@ -184,12 +175,7 @@ document.getElementById("cancelAddProduct")?.addEventListener("click", closeAddP
 document.getElementById("addProductForm")?.addEventListener("submit", async (e) => {
 	e.preventDefault();
 
-	if (
-		!newProductEmoji.value ||
-		!newProductName.value ||
-		!newProductDesc.value ||
-		!newProductPrice.value
-	) {
+	if (!newProductEmoji.value || !newProductName.value || !newProductDesc.value || !newProductPrice.value) {
 		const addProductError = document.getElementById("addProductError");
 
 		if (!addProductError) return;

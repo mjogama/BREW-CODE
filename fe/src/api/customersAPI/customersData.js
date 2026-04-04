@@ -3,15 +3,20 @@ import { CUSTOMER } from "../../constants/endpoints/customersPath.js";
 
 const accessToken = sessionStorage.getItem("accessToken");
 
-export const retrieveCustomersAPI = async () => {
-	const res = await fetch(`${BASE_URL.baseURL}${CUSTOMER.customers}`, {
+export const retrievePaginatedCustomersAPI = async (number) => {
+	if (!accessToken) {
+		window.location.href = "./login.html";
+		return;
+	}
+
+	const res = await fetch(`${BASE_URL.baseURL}${CUSTOMER.paginated}?number=${number}`, {
 		headers: {
 			Authorization: `Bearer ${accessToken}`,
 		},
 	});
 
 	if (!res.ok) {
-		return console.error("Couldn't fetch total customers.");
+		return console.error("Couldn't fetch paganated customers.");
 	}
 
 	const data = await res.json();

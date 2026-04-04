@@ -214,7 +214,7 @@ body {
 
 .admin-main {
 	flex: 1;
-	padding: 32px;
+	padding: 25px 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 28px;
@@ -394,6 +394,7 @@ body {
 
 .table-wrapper {
 	overflow-x: auto;
+	height: 55.8dvh;
 }
 
 .data-table {
@@ -422,6 +423,11 @@ body {
 	transition: background-color 0.15s;
 }
 
+/* Align data row height across admin tables (e.g. customers ~57px vs orders ~67px). */
+.data-table tbody tr:not(.table-empty-row) {
+	height: 67px;
+}
+
 .data-table tbody tr:last-child {
 	border-bottom: none;
 }
@@ -434,7 +440,7 @@ body {
 	padding: 14px 20px;
 	font-size: 0.88rem;
 	color: var(--text);
-	vertical-align: top;
+	vertical-align: middle;
 }
 
 /* Table body cell content — keep text readable and aligned with design */
@@ -505,7 +511,9 @@ body {
 }
 
 .order-products-cell {
+	position: relative;
 	max-width: 240px;
+	z-index: 0;
 }
 
 .order-products-summary {
@@ -543,7 +551,6 @@ body {
 	font-size: 0.875rem;
 	font-weight: 600;
 	cursor: pointer;
-	margin-bottom: 10px;
 	padding: 6px 12px;
 	white-space: nowrap;
 	border-radius: 6px;
@@ -574,10 +581,25 @@ body {
 }
 
 .order-products-list {
+	position: absolute;
+	left: 0;
+	top: 100%;
 	margin-top: 6px;
+	width: 250px;
+	padding: 10px 12px;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	background: #fffdf8;
+	border: 1px solid #f0e6d6;
+	border-radius: 8px;
+	box-shadow: 0 8px 24px rgba(62, 39, 35, 0.12);
+	z-index: 30;
+}
+
+.data-table tbody tr:has(.order-products-list:not([data-hidden])) {
+	position: relative;
+	z-index: 5;
 }
 
 .order-product-row {
@@ -672,10 +694,19 @@ body {
 }
 
 /* Table footer */
-.table-footer {
-	padding: 14px 28px;
-	border-top: 1px solid #f0e6d6;
+
+.table-footer-wrapper {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
 	background-color: #fdf6ec;
+	padding: 14px 28px;
+}
+
+.table-footer {
+	border-top: 1px solid #f0e6d6;
 }
 
 .table-count {
@@ -683,6 +714,52 @@ body {
 	color: var(--muted);
 }
 
+.table-footer-buttons {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+.table-footer-buttons button {
+	padding: 8px 18px;
+	min-width: 100px;
+	border: 1.5px solid #e8d5c0;
+	border-radius: var(--radius);
+	background-color: #fff;
+	color: var(--brown-mid);
+	font-size: 0.85rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition:
+		border-color 0.2s,
+		background-color 0.2s,
+		color 0.2s,
+		transform 0.15s,
+		box-shadow 0.15s;
+}
+
+.table-footer-buttons button:hover:not(:disabled) {
+	border-color: var(--accent);
+	color: var(--brown-dark);
+	background-color: #fffaf2;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 10px rgba(92, 51, 23, 0.08);
+}
+
+.table-footer-buttons button:focus-visible {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(232, 160, 69, 0.22);
+}
+
+.table-footer-buttons button:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
 /* ─── MODALS ──────────────────────────────────────────── */
 
 .modal-overlay {
@@ -985,6 +1062,10 @@ body {
 
 	.col-id {
 		display: none;
+	}
+
+	.table-footer-wrapper {
+		padding: 12px 20px;
 	}
 
 	.table-footer {

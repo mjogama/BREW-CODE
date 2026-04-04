@@ -71,6 +71,18 @@ export const retrieveAdminData = asyncErrorHandler(async (req, res) => {
 	});
 });
 
+export const retrievePaginatedUsers = asyncErrorHandler(async (req, res) => {
+	const { number } = req.data;
+
+	const data = await userService.retrievePaginatedCustomers(number);
+
+	ResponseHandler(res, "success", 200, {
+		data,
+		number,
+		message: `Retrieve page ${number} successfully`,
+	});
+});
+
 export const deleteCustomerData = asyncErrorHandler(async (req, res) => {
 	const { id } = req.data;
 
