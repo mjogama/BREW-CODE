@@ -20,7 +20,7 @@ app.use(helmet());
 app.use(
 	cors({
 		origin: ["http://127.0.0.1:5500", "http://localhost:5500", "https://mjogama.github.io"],
-		methods: ["POST", "GET", "PUT", "DELETE", "PATCH", "OPTION"],
+		methods: ["POST", "GET", "PUT", "DELETE", "PATCH", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
 	}),
