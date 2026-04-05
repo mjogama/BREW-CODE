@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import asyncErrorHandler from "express-async-handler";
 import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
@@ -36,11 +35,14 @@ app.use("/api/product", productRoute);
 
 app.use(globalMiddleware);
 
-const serverStarter = asyncErrorHandler(async () => {
-	await connectDB();
-	app.listen(PORT, () => {
-		console.log(`Server listening at port ${PORT}`);
-	});
-});
-
-serverStarter();
+(async function startServer() {
+	try {
+		await connectDB();
+		app.listen(PORT, () => {
+			console.log(`Server listening at port ${PORT}`);
+		});
+	} catch (err) {
+		console.error(err);
+		process.exit(1);
+	}
+})();
