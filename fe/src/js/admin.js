@@ -84,7 +84,7 @@ export const retrieveAdminData = async () => {
 					</div>
 				</td>
 				<td>
-					<span class="product-name" data-product-id="${regexHTMLHandler(product._id)}">${regexHTMLHandler(product.name)}</span>
+					<span class="product-name" data-product-id="${regexHTMLHandler(product._id)}" title="${regexHTMLHandler(product.name)}">${regexHTMLHandler(product.name)}</span>
 				</td>
 				<td>
 					<div class="product-date">${regexHTMLHandler(formatDate(product.createdAt))}</div>
