@@ -402,6 +402,92 @@ body {
 	border-collapse: collapse;
 }
 
+/* Products table: equal column widths; headers & cells truncate instead of resizing columns */
+#productsTable {
+	table-layout: fixed;
+	width: 100%;
+}
+
+#productsTable thead th {
+	width: 25%;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	box-sizing: border-box;
+}
+
+#productsTable tbody td:nth-child(1),
+#productsTable tbody td:nth-child(2),
+#productsTable tbody td:nth-child(3) {
+	min-width: 0;
+	overflow: hidden;
+}
+
+#productsTable tbody td:nth-child(4) {
+	min-width: 0;
+}
+
+#productsTable tbody td .id-cell {
+	max-width: 100%;
+}
+
+#productsTable tbody .product-date {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Customers table: equal column widths; pagination/content changes must not resize columns */
+#customersTable {
+	table-layout: fixed;
+	width: 100%;
+}
+
+#customersTable thead th {
+	width: 20%;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	box-sizing: border-box;
+}
+
+#customersTable tbody td:nth-child(1),
+#customersTable tbody td:nth-child(2),
+#customersTable tbody td:nth-child(3),
+#customersTable tbody td:nth-child(4) {
+	min-width: 0;
+	overflow: hidden;
+}
+
+#customersTable tbody td:nth-child(5) {
+	min-width: 0;
+}
+
+#customersTable tbody td .id-cell {
+	max-width: 100%;
+}
+
+#customersTable .order-customer-name {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+#customersTable tbody td:nth-child(4) > span {
+	display: block;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
 .data-table thead tr {
 	background-color: #fdf6ec;
 	border-bottom: 2px solid #f0e6d6;
@@ -416,6 +502,14 @@ body {
 	letter-spacing: 0.5px;
 	text-transform: uppercase;
 	white-space: nowrap;
+}
+
+.data-table thead th.col-actions {
+	text-align: right;
+}
+
+.data-table tbody tr:not(.table-empty-row) td:last-child {
+	text-align: right;
 }
 
 .data-table tbody tr {
@@ -469,7 +563,12 @@ body {
 
 /* Product name: read-only in table; only Edit action changes it (id & Added stay unchanged) */
 .data-table tbody .product-name {
-	display: inline-block;
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	font-weight: 600;
 	color: var(--brown-dark);
 	font-size: 0.9rem;
@@ -484,10 +583,6 @@ body {
 
 .col-id {
 	width: 200px;
-}
-
-.col-name {
-	min-width: 100px;
 }
 
 .col-purchased-products {
@@ -1062,6 +1157,21 @@ body {
 
 	.col-id {
 		display: none;
+	}
+
+	/* Products table: ID column hidden — split width evenly across the three visible columns */
+	#productsTable thead th.col-name,
+	#productsTable thead th.col-date,
+	#productsTable thead th.col-actions {
+		width: 33.333%;
+	}
+
+	/* Customers table: ID hidden — four equal columns */
+	#customersTable thead th.col-customer,
+	#customersTable thead th.col-email,
+	#customersTable thead th.col-date,
+	#customersTable thead th.col-actions {
+		width: 25%;
 	}
 
 	.table-footer-wrapper {

@@ -69,10 +69,10 @@ const retrieveCustomersDataHandler = async () => {
 				</div>
 			</td>
 			<td>
-          		<span class="order-customer-name">${regexHTMLHandler(customer.fullName)}</span>
+          		<span class="order-customer-name" title="${regexHTMLHandler(customer.fullName)}">${regexHTMLHandler(customer.fullName)}</span>
         	</td>
             <td>
-          		<span class="order-customer-name">${regexHTMLHandler(customer.email)}</span>
+          		<span class="order-customer-name" title="${regexHTMLHandler(customer.email)}">${regexHTMLHandler(customer.email)}</span>
         	</td>
         	<td>
           		<span>${regexHTMLHandler(formatDate(customer.createdAt))}</span>
@@ -122,7 +122,8 @@ const retrieveCustomersDataHandler = async () => {
 			btn.addEventListener("click", async () => {
 				const userId = btn.getAttribute("data-customer-id");
 				await deleteCustomerDataAPI(userId);
-				retrieveCustomersDataHandler();
+				await retrieveStatsData();
+				await retrieveCustomersDataHandler();
 			});
 		});
 	}
