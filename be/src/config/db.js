@@ -16,9 +16,7 @@ function connectionErrorMessage(error) {
 const connectDB = async () => {
 	const uri = process.env.DB_URI;
 	if (!uri || !String(uri).trim()) {
-		throw new Error(
-			"DB_URI is missing or empty. Set it in your environment (e.g. Vercel project Environment Variables).",
-		);
+		throw new Error("DB_URI is missing or empty. Set it in your environment (e.g. Vercel project Environment Variables).");
 	}
 	try {
 		await mongoose.connect(uri);
