@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 8080;
 app.use(helmet());
 app.use(
 	cors({
-		origin: ["http://127.0.0.1:5500", "http://localhost:5500"],
+		origin: ["http://127.0.0.1:5500", "http://localhost:5500", "https://mjogama.github.io"],
 		methods: ["POST", "GET", "PUT", "DELETE", "PATCH", "OPTION"],
 		allowedHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
