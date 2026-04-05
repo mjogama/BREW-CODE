@@ -2,7 +2,7 @@ import asyncErrorHandler from "express-async-handler";
 
 import * as userService from "../services/user.service.js";
 import { accessToken, refreshToken } from "../utils/accessToken.js";
-import ResponseHandler from "../helpers/responseHandler.js";
+import ResponseHandler from "../helpers/ResponseHandler.js";
 
 export const signupUser = asyncErrorHandler(async (req, res) => {
 	const { fullName, email, hashedPassword, agreeTerms } = req.data;
