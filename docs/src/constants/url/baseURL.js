@@ -1,3 +1,3 @@
 export const BASE_URL = {
-	baseURL: "http://localhost:8000/api",
+	baseURL: "https://brew-code-production-d8ad.up.railway.app/api",
 };
