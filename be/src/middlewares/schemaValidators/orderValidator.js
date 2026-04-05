@@ -1,7 +1,7 @@
 import asyncErrorHandler from "express-async-handler";
 
 import * as orderService from "../../services/order.service.js";
-import ErrorHandler from "../../helpers/errorHandler.js";
+import ErrorHandler from "../../helpers/ErrorHandler.js";
 import validateObjectId from "../../helpers/validateObjectId.js";
 
 export const validateNewOrder = asyncErrorHandler(async (req, res, next) => {

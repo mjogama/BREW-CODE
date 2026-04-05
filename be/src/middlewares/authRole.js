@@ -1,4 +1,4 @@
-import ErrorHandler from "../helpers/errorHandler.js";
+import ErrorHandler from "../helpers/ErrorHandler.js";
 
 const authRole = (...roles) => {
 	return (req, res, next) => {

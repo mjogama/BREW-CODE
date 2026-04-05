@@ -2,7 +2,7 @@ import asyncErrorHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 
 import * as userService from "../../services/user.service.js";
-import ErrorHandler from "../../helpers/errorHandler.js";
+import ErrorHandler from "../../helpers/ErrorHandler.js";
 import userSchema from "../../schemas/user.schema.js";
 import validateObjectId from "../../helpers/validateObjectId.js";
 

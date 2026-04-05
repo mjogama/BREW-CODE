@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-import ErrorHandler from "../helpers/errorHandler.js";
+import ErrorHandler from "../helpers/ErrorHandler.js";
 import jwtErrorHandler from "../helpers/jwtErrorHandler.js";
 
 const authToken = (req, res, next) => {
