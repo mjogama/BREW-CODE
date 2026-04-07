@@ -100,32 +100,36 @@
 
 				<!-- PRODUCTS SECTION -->
 				<section class="admin-section" id="products">
-					<div class="section-header">
-						<div>
+					<div class="section-header section-header--with-toolbar">
+						<div class="section-header-main">
 							<h2>Products</h2>
 							<p>Manage your sweet menu items</p>
 						</div>
-						<button class="btn-add" id="openAddProductModal">+ Add Product</button>
-					</div>
-
-					<!-- SEARCH & FILTER BAR -->
-					<div class="table-toolbar">
-						<div class="search-box">
-							<span class="search-icon">🔍</span>
-							<input type="text" id="searchProducts" placeholder="Search products..." autocomplete="off" />
-						</div>
-						<div class="toolbar-actions">
-							<select id="sortProducts" class="toolbar-select">
-								<option value="">Sort by...</option>
-								<option value="name-asc">Name A–Z</option>
-								<option value="name-desc">Name Z–A</option>
-							</select>
+						<div class="section-header-toolbar">
+							<button class="btn-add" id="openAddProductModal">+ Add Product</button>
+							<div class="search-box">
+								<span class="search-icon">🔍</span>
+								<input type="text" id="searchProducts" placeholder="Search products..." autocomplete="off" />
+							</div>
+							<div class="toolbar-actions">
+								<select id="sortProducts" class="toolbar-select">
+									<option value="">Sort by...</option>
+									<option value="name-asc">Name A–Z</option>
+									<option value="name-desc">Name Z–A</option>
+								</select>
+							</div>
 						</div>
 					</div>
 
 					<!-- PRODUCTS TABLE -->
 					<div class="table-wrapper">
 						<table class="data-table" id="productsTable">
+							<colgroup>
+								<col class="admin-col-id" />
+								<col class="admin-col-product-name" />
+								<col class="admin-col-2" />
+								<col class="admin-col-actions" />
+							</colgroup>
 							<thead>
 								<tr>
 									<th class="col-id">ID</th>

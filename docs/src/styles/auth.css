@@ -219,3 +219,22 @@
 .terms-row a:hover {
 	color: var(--accent);
 }
+
+@media (max-width: 480px) {
+	.form-options {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+
+	.role-options {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.role-badge {
+		display: block;
+		width: 100%;
+		text-align: center;
+	}
+}

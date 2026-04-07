@@ -4,6 +4,7 @@ import { retrieveOrdersDataAPI, retrievePaginatedCustomersAPI, updateOrderDataAP
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 import formatData from "../utils/formatDate.js";
 import { notifyOrdersChanged } from "../utils/orderBroadcast.js";
+import { initAdminLayout } from "./adminLayout.js";
 
 // stats elements
 const navbarName = document.getElementById("navbarName");
@@ -63,15 +64,15 @@ const retrieveOrdersDataHandler = async () => {
 				.map((order) => {
 					return `
      	<tr class="product-row">
-			<td>
+			<td data-label="Order ID">
 				<div>
 					<span class="id-cell" title="${regexHTMLHandler(order._id)}">${regexHTMLHandler(order._id)}</span>
 				</div>
 			</td>
-			<td>
+			<td data-label="Customer">
           		<span class="order-customer-name">${regexHTMLHandler(order.user.fullName || order.fullName)}</span>
         	</td>
-       		<td>
+       		<td data-label="Products">
           		<div class="order-products-cell">
 					${(() => {
 						const products = order.purchasedProducts || [];
@@ -115,17 +116,17 @@ const retrieveOrdersDataHandler = async () => {
 					})()}
           		</div>
        		</td>
-        	<td>
+        	<td data-label="Status">
 				<select class="order-status-select toolbar-select" data-order-id="${regexHTMLHandler(order._id)}" data-prev-status="${regexHTMLHandler(order.status)}">
 					<option value="pending" ${order.status === "pending" ? "selected" : ""}>pending</option>
 					<option value="ongoing" ${order.status === "ongoing" ? "selected" : ""}>ongoing</option>
 					<option value="finished" ${order.status === "finished" ? "selected" : ""}>finished</option>
 				</select>
         	</td>
-        	<td>
+        	<td data-label="Date">
           		<span>${regexHTMLHandler(formatData(order.createdAt))}</span>
         	</td>
-			<td>
+			<td data-label="Actions">
 				<button
 		       		type="button"
 		       		class="btn-delete delete-button"
@@ -270,3 +271,4 @@ tableFooterButtons.forEach((btn) => {
 
 await retrieveStatsData();
 await retrieveOrdersDataHandler();
+initAdminLayout();

@@ -97,33 +97,38 @@
 					</div>
 				</div>
 
-				<!-- ORDERS SECTION -->
+				<!-- CUSTOMERS SECTION -->
 				<section class="admin-section" id="products">
-					<div class="section-header">
-						<div>
+					<div class="section-header section-header--with-toolbar">
+						<div class="section-header-main">
 							<h2>Customers</h2>
-							<p>Manage your sweet orders</p>
+							<p>Manage your customers</p>
+						</div>
+						<div class="section-header-toolbar">
+							<div class="search-box">
+								<span class="search-icon">🔍</span>
+								<input type="text" id="searchCustomers" placeholder="Search customers..." autocomplete="off" />
+							</div>
+							<div class="toolbar-actions">
+								<select id="sortCustomersName" class="toolbar-select">
+									<option value="">Sort by...</option>
+									<option value="name-asc">Name A–Z</option>
+									<option value="name-desc">Name Z–A</option>
+								</select>
+							</div>
 						</div>
 					</div>
 
-					<!-- SEARCH & FILTER BAR -->
-					<div class="table-toolbar">
-						<div class="search-box">
-							<span class="search-icon">🔍</span>
-							<input type="text" id="searchCustomers" placeholder="Search products..." autocomplete="off" />
-						</div>
-						<div class="toolbar-actions">
-							<select id="sortCustomersName" class="toolbar-select">
-								<option value="">Sort by...</option>
-								<option value="name-asc">Name A–Z</option>
-								<option value="name-desc">Name Z–A</option>
-							</select>
-						</div>
-					</div>
-
-					<!-- ORDERS TABLE -->
+					<!-- CUSTOMERS TABLE -->
 					<div class="table-wrapper">
 						<table class="data-table" id="customersTable">
+							<colgroup>
+								<col class="admin-col-id" />
+								<col class="admin-col-2" />
+								<col class="admin-col-email" />
+								<col class="admin-col-date" />
+								<col class="admin-col-actions" />
+							</colgroup>
 							<thead>
 								<tr>
 									<th class="col-id">ID</th>

@@ -186,7 +186,15 @@ const modalPlaceOrderNoButton = async () => {
 	navCartSidebarAddMore.classList.add("is-hidden");
 };
 
+const closeMobilePrimaryNav = () => {
+	document.getElementById("mainNav")?.classList.remove("nav-open");
+	const toggle = document.getElementById("navMenuToggle");
+	toggle?.setAttribute("aria-expanded", "false");
+	toggle?.setAttribute("aria-label", "Open menu");
+};
+
 const openCartSidebar = () => {
+	closeMobilePrimaryNav();
 	navCartSidebarContainer?.classList.remove("nav-cart-sidebar-animate");
 };
 
@@ -223,6 +231,22 @@ const removeFromCart = (productName) => {
 	renderCartSidebar();
 	updateCartBadge();
 };
+
+// Mobile primary nav
+const mainNav = document.getElementById("mainNav");
+const navMenuToggle = document.getElementById("navMenuToggle");
+navMenuToggle?.addEventListener("click", () => {
+	const open = mainNav.classList.toggle("nav-open");
+	navMenuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+	navMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+});
+document.querySelectorAll("#mainNavLinks a").forEach((link) => {
+	link.addEventListener("click", () => {
+		mainNav?.classList.remove("nav-open");
+		navMenuToggle?.setAttribute("aria-expanded", "false");
+		navMenuToggle?.setAttribute("aria-label", "Open menu");
+	});
+});
 
 // Cart button: open sidebar
 navCartButton?.addEventListener("click", openCartSidebar);

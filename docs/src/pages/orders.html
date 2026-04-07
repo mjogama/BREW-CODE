@@ -100,31 +100,37 @@
 
 				<!-- ORDERS SECTION -->
 				<section class="admin-section" id="products">
-					<div class="section-header">
-						<div>
+					<div class="section-header section-header--with-toolbar">
+						<div class="section-header-main">
 							<h2>Orders</h2>
 							<p>Manage your sweet orders</p>
 						</div>
-					</div>
-
-					<!-- SEARCH & FILTER BAR -->
-					<div class="table-toolbar">
-						<div class="search-box">
-							<span class="search-icon">🔍</span>
-							<input type="text" id="searchOrders" placeholder="Search products..." autocomplete="off" />
-						</div>
-						<div class="toolbar-actions">
-							<select id="sortOrders" class="toolbar-select">
-								<option value="">Sort by...</option>
-								<option value="name-asc">Name A–Z</option>
-								<option value="name-desc">Name Z–A</option>
-							</select>
+						<div class="section-header-toolbar">
+							<div class="search-box">
+								<span class="search-icon">🔍</span>
+								<input type="text" id="searchOrders" placeholder="Search orders..." autocomplete="off" />
+							</div>
+							<div class="toolbar-actions">
+								<select id="sortOrders" class="toolbar-select">
+									<option value="">Sort by...</option>
+									<option value="name-asc">Name A–Z</option>
+									<option value="name-desc">Name Z–A</option>
+								</select>
+							</div>
 						</div>
 					</div>
 
 					<!-- ORDERS TABLE -->
 					<div class="table-wrapper">
 						<table class="data-table" id="ordersTable">
+							<colgroup>
+								<col class="admin-col-id" />
+								<col class="admin-col-2" />
+								<col class="admin-col-product-name" />
+								<col class="admin-col-status" />
+								<col class="admin-col-date" />
+								<col class="admin-col-actions" />
+							</colgroup>
 							<thead>
 								<tr>
 									<th class="col-id">ID</th>
