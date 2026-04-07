@@ -2,6 +2,7 @@ import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomers
 import { retrieveProductsSaleAPI } from "../api/analyticsAPI/analyticsData.js";
 import animateCount from "../utils/animateCount.js";
 import { ORDERS_BROADCAST_CHANNEL } from "../utils/orderBroadcast.js";
+import { initAdminLayout } from "./adminLayout.js";
 
 // stats elements
 const navbarName = document.getElementById("navbarName");
@@ -11,7 +12,13 @@ const totalCustomersEl = document.getElementById("totalCustomers");
 const totalRevenueEl = document.getElementById("totalRevenue");
 
 let salesChart = null;
+let chartResizeObserver = null;
 let refreshInFlight = null;
+
+const disconnectChartResizeObserver = () => {
+	chartResizeObserver?.disconnect();
+	chartResizeObserver = null;
+};
 
 export const retrieveGraphData = async () => {
 	if (typeof Chart === "undefined") return;
@@ -29,6 +36,9 @@ export const retrieveGraphData = async () => {
 		salesChart.destroy();
 		salesChart = null;
 	}
+	disconnectChartResizeObserver();
+
+	const isNarrow = typeof window !== "undefined" && window.matchMedia("(max-width: 600px)").matches;
 
 	salesChart = new Chart(productGraph, {
 		type: "bar",
@@ -36,20 +46,62 @@ export const retrieveGraphData = async () => {
 			labels: nameProductsSale,
 			datasets: [
 				{
-					label: "Product Sold",
+					label: "Sold Products",
 					data: soldProductsSale,
 					borderWidth: 1,
 				},
 			],
 		},
 		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			resizeDelay: 0,
+			layout: {
+				padding: { top: 8, right: 8, bottom: 4, left: 4 },
+			},
+			plugins: {
+				legend: {
+					display: true,
+					position: "top",
+					labels: {
+						boxWidth: 14,
+						padding: 10,
+						font: { size: isNarrow ? 11 : 12, family: "'Segoe UI', system-ui, sans-serif" },
+					},
+				},
+				tooltip: {
+					enabled: true,
+				},
+			},
 			scales: {
+				x: {
+					ticks: {
+						maxRotation: isNarrow ? 55 : 40,
+						minRotation: 0,
+						autoSkip: true,
+						font: { size: isNarrow ? 10 : 11 },
+					},
+					grid: { display: false },
+				},
 				y: {
 					beginAtZero: true,
+					ticks: {
+						precision: 0,
+						font: { size: isNarrow ? 10 : 11 },
+					},
+					border: { display: false },
 				},
 			},
 		},
 	});
+
+	const frameEl = productGraph.closest(".analytics-chart-frame");
+	if (frameEl && typeof ResizeObserver !== "undefined") {
+		chartResizeObserver = new ResizeObserver(() => {
+			if (salesChart) salesChart.resize();
+		});
+		chartResizeObserver.observe(frameEl);
+	}
 };
 
 const retrieveStatsData = async () => {
@@ -87,6 +139,7 @@ export function refreshAnalyticsDashboard() {
 	return refreshInFlight;
 }
 
+initAdminLayout();
 refreshAnalyticsDashboard();
 
 try {

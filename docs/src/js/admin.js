@@ -3,6 +3,7 @@ import { createNewProductAPI, retrievePaginatedCustomersAPI, retrieveProductsAPI
 import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
+import { initAdminLayout } from "./adminLayout.js";
 
 // products statistics elements
 const navbarName = document.getElementById("navbarName");
@@ -78,18 +79,18 @@ export const retrieveAdminData = async () => {
 				.map((product) => {
 					return `
 			<tr class="product-row">
-				<td>
+				<td data-label="ID">
 					<div>
 						<span class="id-cell" title="${regexHTMLHandler(product._id)}">${regexHTMLHandler(product._id)}</span>
 					</div>
 				</td>
-				<td>
+				<td data-label="Product">
 					<span class="product-name" data-product-id="${regexHTMLHandler(product._id)}" title="${regexHTMLHandler(product.name)}">${regexHTMLHandler(product.name)}</span>
 				</td>
-				<td>
+				<td data-label="Added">
 					<div class="product-date">${regexHTMLHandler(formatDate(product.createdAt))}</div>
 				</td>
-				<td>
+				<td data-label="Actions">
 					<div class="action-btns">
 						<button type="button" class="btn-edit edit-button" data-product-id="${regexHTMLHandler(product._id)}" data-product-name="${regexHTMLHandler(product.name)}" aria-label="Edit">Edit</button>
 						<button type="button" class="btn-delete delete-button" data-product-id="${regexHTMLHandler(product._id)}" data-product-name="${regexHTMLHandler(product.name)}" aria-label="Delete">Delete</button>
@@ -211,4 +212,5 @@ document.getElementById("editProductForm")?.addEventListener("submit", async (e)
 	if (data) retrieveAdminData();
 });
 
+initAdminLayout();
 retrieveAdminData();

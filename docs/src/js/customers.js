@@ -2,6 +2,7 @@ import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomers
 import { retrievePaginatedCustomersAPI, deleteCustomerDataAPI } from "../api/customersAPI/customersData.js";
 import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
+import { initAdminLayout } from "./adminLayout.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 
 // stats elements
@@ -63,21 +64,21 @@ const retrieveCustomersDataHandler = async () => {
 				.map((customer) => {
 					return `
      	<tr class="product-row">
-			<td>
+			<td data-label="ID">
 				<div>
 					<span class="id-cell" title="${regexHTMLHandler(customer._id)}">${regexHTMLHandler(customer._id)}</span>
 				</div>
 			</td>
-			<td>
+			<td data-label="Customer">
           		<span class="order-customer-name" title="${regexHTMLHandler(customer.fullName)}">${regexHTMLHandler(customer.fullName)}</span>
         	</td>
-            <td>
+            <td data-label="Email">
           		<span class="order-customer-name" title="${regexHTMLHandler(customer.email)}">${regexHTMLHandler(customer.email)}</span>
         	</td>
-        	<td>
+        	<td data-label="Joined">
           		<span>${regexHTMLHandler(formatDate(customer.createdAt))}</span>
         	</td>
-			<td>
+			<td data-label="Actions">
 				<button
 		       		type="button"
 		       		class="btn-delete delete-button"
@@ -110,10 +111,10 @@ const retrieveCustomersDataHandler = async () => {
 			e.preventDefault();
 
 			if (sortCustomersName.value === "name-asc") {
-				const customerNameAZ = customers.sort((a, b) => a.fullName.localeCompare(b.fullName.localeCompare));
+				const customerNameAZ = customers.sort((a, b) => a.fullName.localeCompare(b.fullName));
 				renderCustomersTable(customerNameAZ);
 			} else {
-				const customerNameZA = customers.sort((a, b) => b.fullName.localeCompare(a.fullName.localeCompare));
+				const customerNameZA = customers.sort((a, b) => b.fullName.localeCompare(a.fullName));
 				renderCustomersTable(customerNameZA);
 			}
 		});
@@ -149,5 +150,6 @@ tableFooterButtons.forEach((btn) => {
 	});
 });
 
+initAdminLayout();
 retrieveStatsData();
 retrieveCustomersDataHandler();

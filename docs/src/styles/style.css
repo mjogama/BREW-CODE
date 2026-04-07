@@ -24,13 +24,13 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 24px;
+	padding: clamp(12px, 4vw, 24px);
 }
 
 .card {
 	background-color: var(--cream);
 	border-radius: 20px;
-	padding: 48px 40px;
+	padding: clamp(28px, 6vw, 48px) clamp(22px, 5vw, 40px);
 	width: 100%;
 	max-width: 440px;
 	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);

@@ -20,6 +20,33 @@
 	--danger: #d94f4f;
 	--danger-hover: #c03e3e;
 	--success: #3a9e6e;
+
+	/*
+	 * Admin tables — fixed width: ID + customer/product-name (sticky); rest flex; actions fixed.
+	 * Tweak --admin-tbl-col-* here. Add a <col> + th/td when you add a column.
+	 */
+	/* ~24-char ObjectId on one line (ellipsis); full id still in title on the cell */
+	--admin-tbl-col-id: 180px;
+	--admin-tbl-col-2: 170px;
+	--admin-tbl-col-product-name: 360px;
+	--admin-tbl-col-email: 170px;
+	--admin-tbl-col-date: 170px;
+	--admin-tbl-col-status: 140px;
+	--admin-tbl-col-actions: 190px;
+	/* Second sticky column offset = ID width (used for Customer / Product name) */
+	--admin-tbl-sticky-2-left: var(--admin-tbl-col-id);
+}
+
+@media (max-width: 1200px) {
+	:root {
+		--admin-tbl-col-id: min(180px, 15vw);
+		--admin-tbl-col-2: min(170px, 14.1vw);
+		--admin-tbl-col-product-name: min(360px, 30vw);
+		--admin-tbl-col-email: min(170px, 14.1vw);
+		--admin-tbl-col-date: min(170px, 14.1vw);
+		--admin-tbl-col-status: min(140px, 11.6vw);
+		--admin-tbl-col-actions: min(190px, 15.8vw);
+	}
 }
 
 body {
@@ -127,6 +154,25 @@ body {
 	color: #f08080;
 }
 
+.sidebar-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(44, 26, 14, 0.45);
+	z-index: 150;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition:
+		opacity 0.25s ease,
+		visibility 0.25s ease;
+}
+
+.sidebar-backdrop.is-visible {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
 /* ─── LAYOUT ──────────────────────────────────────────── */
 
 .admin-layout {
@@ -171,6 +217,7 @@ body {
 
 .topbar-title {
 	flex: 1;
+	min-width: 0;
 }
 
 .topbar-title h1 {
@@ -178,6 +225,9 @@ body {
 	font-weight: 800;
 	color: var(--brown-dark);
 	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .topbar-title p {
@@ -304,6 +354,49 @@ body {
 	margin-top: 2px;
 }
 
+/* Products / orders / customers: title + (optional Add) + search + sort in one band */
+.section-header--with-toolbar {
+	align-items: center;
+	padding: 16px 24px 16px;
+	flex-wrap: wrap;
+	row-gap: 12px;
+}
+
+.section-header--with-toolbar .section-header-main {
+	flex: 1 1 40px;
+	min-width: 0;
+}
+
+.section-header--with-toolbar .section-header-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+	flex: 3 1 340px;
+	min-width: 0;
+}
+
+/* Orders & customers: no Add button — give the control row more room to grow */
+.section-header--with-toolbar:not(:has(.btn-add)) .section-header-toolbar {
+	flex: 4 1 39.5px;
+}
+
+.section-header--with-toolbar .section-header-toolbar .search-box {
+	flex: 1 1 38px;
+	max-width: none;
+	width: auto;
+	min-width: 160px;
+}
+
+.section-header--with-toolbar .section-header-toolbar .toolbar-actions {
+	flex: 0 0 auto;
+}
+
+.section-header--with-toolbar .section-header-toolbar .toolbar-select {
+	min-width: 8.5rem;
+}
+
 .btn-add {
 	padding: 10px 20px;
 	background-color: var(--accent);
@@ -394,7 +487,12 @@ body {
 
 .table-wrapper {
 	overflow-x: auto;
+	overflow-y: auto;
 	height: 55.8dvh;
+	border-radius: 14px;
+	border: 1px solid rgba(232, 160, 69, 0.14);
+	background-color: #fff;
+	scrollbar-gutter: stable;
 }
 
 .data-table {
@@ -402,14 +500,53 @@ body {
 	border-collapse: collapse;
 }
 
-/* Products table: equal column widths; headers & cells truncate instead of resizing columns */
+/*
+ * colgroup: ID + “who/what” column (customer or product name) stay fixed width + sticky when scrolling.
+ * Other columns share the remaining table width (table is width: 100%).
+ */
+col.admin-col-id {
+	width: var(--admin-tbl-col-id);
+	min-width: var(--admin-tbl-col-id);
+}
+
+col.admin-col-2 {
+	width: var(--admin-tbl-col-2);
+	min-width: var(--admin-tbl-col-2);
+}
+
+col.admin-col-product-name {
+	width: auto;
+	min-width: min(360px, 32vw);
+}
+
+col.admin-col-email {
+	width: auto;
+	min-width: 0;
+}
+
+col.admin-col-date {
+	width: auto;
+	min-width: 0;
+}
+
+col.admin-col-status {
+	width: auto;
+	min-width: 0;
+}
+
+col.admin-col-actions {
+	width: var(--admin-tbl-col-actions);
+	min-width: var(--admin-tbl-col-actions);
+}
+
+/* Full-width table; fixed + sticky first two columns */
 #productsTable {
 	table-layout: fixed;
 	width: 100%;
+	border-collapse: collapse;
 }
 
 #productsTable thead th {
-	width: 25%;
 	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -417,7 +554,12 @@ body {
 	box-sizing: border-box;
 }
 
-#productsTable tbody td:nth-child(1),
+#productsTable tbody td:nth-child(1) {
+	min-width: 0;
+	overflow: hidden;
+	vertical-align: middle;
+}
+
 #productsTable tbody td:nth-child(2),
 #productsTable tbody td:nth-child(3) {
 	min-width: 0;
@@ -429,7 +571,13 @@ body {
 }
 
 #productsTable tbody td .id-cell {
+	display: block;
+	width: 100%;
 	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-break: normal;
 }
 
 #productsTable tbody .product-date {
@@ -440,14 +588,54 @@ body {
 	white-space: nowrap;
 }
 
-/* Customers table: equal column widths; pagination/content changes must not resize columns */
+/* Products: sticky ID + product name (col 2) */
+#productsTable thead th:nth-child(1),
+#productsTable tbody td:nth-child(1) {
+	position: sticky;
+	left: 0;
+	z-index: 2;
+}
+
+#productsTable thead th:nth-child(1) {
+	z-index: 4;
+	background-color: #fdf6ec;
+}
+
+#productsTable tbody td:nth-child(1) {
+	background-color: #fff;
+}
+
+#productsTable tbody tr:hover td:nth-child(1) {
+	background-color: #fdf6ec;
+}
+
+#productsTable thead th:nth-child(2),
+#productsTable tbody td:nth-child(2) {
+	position: sticky;
+	left: var(--admin-tbl-sticky-2-left);
+	z-index: 2;
+}
+
+#productsTable thead th:nth-child(2) {
+	z-index: 4;
+	background-color: #fdf6ec;
+}
+
+#productsTable tbody td:nth-child(2) {
+	background-color: #fff;
+}
+
+#productsTable tbody tr:hover td:nth-child(2) {
+	background-color: #fdf6ec;
+}
+
 #customersTable {
 	table-layout: fixed;
 	width: 100%;
+	border-collapse: collapse;
 }
 
 #customersTable thead th {
-	width: 20%;
 	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -455,7 +643,12 @@ body {
 	box-sizing: border-box;
 }
 
-#customersTable tbody td:nth-child(1),
+#customersTable tbody td:nth-child(1) {
+	min-width: 0;
+	overflow: hidden;
+	vertical-align: middle;
+}
+
 #customersTable tbody td:nth-child(2),
 #customersTable tbody td:nth-child(3),
 #customersTable tbody td:nth-child(4) {
@@ -468,7 +661,13 @@ body {
 }
 
 #customersTable tbody td .id-cell {
+	display: block;
+	width: 100%;
 	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-break: normal;
 }
 
 #customersTable .order-customer-name {
@@ -486,6 +685,149 @@ body {
 	white-space: nowrap;
 	font-size: 0.85rem;
 	color: var(--muted);
+}
+
+/* Customers: sticky ID + customer name */
+#customersTable thead th:nth-child(1),
+#customersTable tbody td:nth-child(1) {
+	position: sticky;
+	left: 0;
+	z-index: 2;
+}
+
+#customersTable thead th:nth-child(1) {
+	z-index: 4;
+	background-color: #fdf6ec;
+}
+
+#customersTable tbody td:nth-child(1) {
+	background-color: #fff;
+}
+
+#customersTable tbody tr:hover td:nth-child(1) {
+	background-color: #fdf6ec;
+}
+
+#customersTable thead th:nth-child(2),
+#customersTable tbody td:nth-child(2) {
+	position: sticky;
+	left: var(--admin-tbl-sticky-2-left);
+	z-index: 2;
+}
+
+#customersTable thead th:nth-child(2) {
+	z-index: 4;
+	background-color: #fdf6ec;
+}
+
+#customersTable tbody td:nth-child(2) {
+	background-color: #fff;
+}
+
+#customersTable tbody tr:hover td:nth-child(2) {
+	background-color: #fdf6ec;
+}
+
+#ordersTable {
+	table-layout: fixed;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#ordersTable thead th {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	box-sizing: border-box;
+}
+
+#ordersTable thead th.col-purchased-products {
+	min-width: 0;
+}
+
+#ordersTable tbody td {
+	min-width: 0;
+}
+
+#ordersTable tbody td:nth-child(1) {
+	overflow: hidden;
+	vertical-align: middle;
+}
+
+#ordersTable tbody td:nth-child(2),
+#ordersTable tbody td:nth-child(4),
+#ordersTable tbody td:nth-child(5) {
+	overflow: hidden;
+}
+
+#ordersTable tbody td:nth-child(3) {
+	min-width: 0;
+	overflow: visible;
+}
+
+#ordersTable tbody td .id-cell {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-break: normal;
+}
+
+#ordersTable .order-customer-name {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#ordersTable .order-products-cell {
+	max-width: 100%;
+}
+
+/* Orders: sticky ID + customer */
+#ordersTable thead th:nth-child(1),
+#ordersTable tbody td:nth-child(1) {
+	position: sticky;
+	left: 0;
+	z-index: 2;
+}
+
+#ordersTable thead th:nth-child(1) {
+	z-index: 4;
+	background-color: #fdf6ec;
+}
+
+#ordersTable tbody td:nth-child(1) {
+	background-color: #fff;
+}
+
+#ordersTable tbody tr:hover td:nth-child(1) {
+	background-color: #fdf6ec;
+}
+
+#ordersTable thead th:nth-child(2),
+#ordersTable tbody td:nth-child(2) {
+	position: sticky;
+	left: var(--admin-tbl-sticky-2-left);
+	z-index: 2;
+}
+
+#ordersTable thead th:nth-child(2) {
+	z-index: 4;
+	background-color: #fdf6ec;
+}
+
+#ordersTable tbody td:nth-child(2) {
+	background-color: #fff;
+}
+
+#ordersTable tbody tr:hover td:nth-child(2) {
+	background-color: #fdf6ec;
 }
 
 .data-table thead tr {
@@ -517,9 +859,10 @@ body {
 	transition: background-color 0.15s;
 }
 
-/* Align data row height across admin tables (e.g. customers ~57px vs orders ~67px). */
+/* Min row height; allow taller rows when ID (or other cells) wrap */
 .data-table tbody tr:not(.table-empty-row) {
-	height: 67px;
+	min-height: 67px;
+	height: auto;
 }
 
 .data-table tbody tr:last-child {
@@ -1099,21 +1442,64 @@ body {
 	color: var(--text);
 }
 
+/* ─── ANALYTICS CHARTS ────────────────────────────────── */
+
+.analytics-charts {
+	width: 100%;
+	max-width: min(960px, 100%);
+	margin-left: auto;
+	margin-right: auto;
+	padding: clamp(8px, 2vw, 16px) clamp(10px, 3vw, 20px) clamp(20px, 4vw, 32px);
+	box-sizing: border-box;
+}
+
+/*
+ * Chart.js fills this box (maintainAspectRatio: false). Fluid height keeps the
+ * graph readable on small screens without squashing bar proportions.
+ */
+.analytics-chart-frame {
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+	height: clamp(240px, 38vh, 420px);
+	min-height: 220px;
+	max-height: min(52vh, 520px);
+	margin: 0 auto;
+}
+
+.analytics-chart-frame canvas {
+	display: block;
+	max-width: 100%;
+}
+
 /* ─── RESPONSIVE ──────────────────────────────────────── */
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
 	.stats-strip {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
+@media (max-width: 900px) {
+	.admin-main {
+		padding: 18px 14px;
+		gap: 22px;
+	}
+}
+
 @media (max-width: 768px) {
+	body.admin-sidebar-open {
+		overflow: hidden;
+	}
+
 	.sidebar {
 		transform: translateX(-100%);
+		box-shadow: none;
 	}
 
 	.sidebar.open {
 		transform: translateX(0);
+		box-shadow: 8px 0 32px rgba(0, 0, 0, 0.25);
 	}
 
 	.admin-layout {
@@ -1122,14 +1508,28 @@ body {
 
 	.sidebar-toggle {
 		display: block;
+		flex-shrink: 0;
 	}
 
 	.topbar {
-		padding: 0 20px;
+		padding: 0 16px;
+		gap: 12px;
+		height: auto;
+		min-height: var(--topbar-height);
+		flex-wrap: wrap;
+		row-gap: 8px;
+	}
+
+	.topbar-title p {
+		display: none;
+	}
+
+	.topbar-user {
+		margin-left: auto;
 	}
 
 	.admin-main {
-		padding: 20px;
+		padding: 16px 12px;
 	}
 
 	.stats-strip {
@@ -1137,22 +1537,62 @@ body {
 	}
 
 	.section-header {
-		padding: 20px;
+		padding: 18px 16px 16px;
 		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	.section-header--with-toolbar {
+		padding: 14px 16px;
+		align-items: stretch;
+	}
+
+	.section-header--with-toolbar .section-header-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+		flex-basis: 100%;
+		width: 100%;
+		justify-content: stretch;
+	}
+
+	.section-header--with-toolbar .section-header-toolbar .search-box {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.section-header--with-toolbar .section-header-toolbar .toolbar-actions {
+		width: 100%;
+	}
+
+	.section-header--with-toolbar .section-header-toolbar .toolbar-select {
+		width: 100%;
+		min-width: 0;
 	}
 
 	.table-toolbar {
-		padding: 12px 20px;
-		flex-wrap: wrap;
+		padding: 12px 16px;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+	}
+
+	.toolbar-actions {
+		width: 100%;
+	}
+
+	.toolbar-actions .toolbar-select {
+		width: 100%;
 	}
 
 	.search-box {
-		max-width: 100%;
+		max-width: none;
+		width: 100%;
 	}
 
 	.data-table th,
 	.data-table td {
-		padding: 12px 14px;
+		padding: 10px 12px;
+		font-size: 0.82rem;
 	}
 
 	.col-id {
@@ -1174,27 +1614,343 @@ body {
 		width: 25%;
 	}
 
+	/* Orders table: ID hidden — redistribute fixed widths across five columns */
+	#ordersTable thead th.col-customer {
+		width: 16%;
+	}
+
+	#ordersTable thead th.col-purchased-products {
+		width: 30%;
+	}
+
+	#ordersTable thead th.col-status {
+		width: 14%;
+	}
+
+	#ordersTable thead th.col-date {
+		width: 18%;
+	}
+
+	#ordersTable thead th.col-actions {
+		width: 22%;
+	}
+
+	/* Stacked card rows (products, orders, customers) */
+	.table-wrapper {
+		overflow-x: visible;
+		overflow-y: visible;
+		height: auto;
+		min-height: 0;
+		max-height: none;
+		padding: 4px 0 12px;
+		background: transparent;
+		border: none;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.table-wrapper .data-table {
+		display: block;
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+	}
+
+	.table-wrapper .data-table thead {
+		display: none;
+	}
+
+	.table-wrapper .data-table tbody {
+		display: block;
+	}
+
+	.table-wrapper .data-table tbody tr.table-empty-row {
+		display: block;
+		background: #fff;
+		border-radius: 14px;
+		border: 1px solid rgba(232, 160, 69, 0.15);
+	}
+
+	.table-wrapper .data-table tbody tr.table-empty-row td {
+		display: block;
+		width: 100%;
+		padding: 40px 20px;
+		border: none;
+		text-align: center;
+	}
+
+	.table-wrapper .data-table tbody tr.table-empty-row td::before {
+		content: none !important;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row {
+		display: block;
+		height: auto;
+		margin-bottom: 14px;
+		padding: 0;
+		background: #fff;
+		border: 1px solid rgba(232, 160, 69, 0.18);
+		border-radius: 14px;
+		box-shadow: 0 4px 14px rgba(44, 26, 14, 0.06);
+		overflow: hidden;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 12px;
+		min-height: 0;
+		padding: 12px 16px;
+		border-bottom: 1px solid #f0e6d6;
+		text-align: right;
+		vertical-align: top;
+	}
+
+	/* Card layout: disable desktop sticky columns */
+	.table-wrapper .data-table tbody tr.product-row td:nth-child(1),
+	.table-wrapper .data-table tbody tr.product-row td:nth-child(2) {
+		position: static;
+		left: auto;
+		box-shadow: none;
+		z-index: auto;
+		background-color: transparent;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td:last-child {
+		border-bottom: none;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td::before {
+		content: attr(data-label);
+		flex: 0 0 auto;
+		max-width: 40%;
+		padding-top: 2px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--muted);
+		text-align: left;
+		line-height: 1.35;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td > * {
+		flex: 1 1 auto;
+		min-width: 0;
+		text-align: right;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row > td:nth-child(1) {
+		display: none;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td[data-label="Actions"] {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td[data-label="Actions"]::before {
+		max-width: none;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td[data-label="Actions"] > * {
+		width: 100%;
+		text-align: right;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td[data-label="Actions"] .action-btns {
+		justify-content: flex-end;
+		flex-wrap: wrap;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row .order-customer-name {
+		white-space: normal;
+		overflow: visible;
+		text-overflow: unset;
+		max-width: none;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row td[data-label="Status"] select,
+	.table-wrapper .data-table tbody tr.product-row .order-status-select {
+		width: 100%;
+		max-width: none;
+		box-sizing: border-box;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row .order-products-cell {
+		max-width: none;
+		width: 100%;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row .order-products-list {
+		position: static;
+		left: auto;
+		top: auto;
+		margin-top: 8px;
+		width: 100%;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	.table-wrapper .data-table tbody tr.product-row .order-products-summary {
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.table-wrapper .data-table tbody tr:has(.order-products-list:not([data-hidden="true"])) {
+		z-index: auto;
+	}
+
 	.table-footer-wrapper {
-		padding: 12px 20px;
+		padding: 12px 16px;
+		flex-direction: column;
+		align-items: stretch;
 	}
 
 	.table-footer {
-		padding: 12px 20px;
+		padding: 0;
+		width: 100%;
+	}
+
+	.table-footer-buttons {
+		width: 100%;
+		justify-content: stretch;
+	}
+
+	.table-footer-buttons button {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.modal-overlay {
+		padding: 12px;
+		align-items: flex-end;
+	}
+
+	.modal {
+		max-width: 100%;
+		width: 100%;
+		border-radius: 16px 16px 0 0;
+		max-height: min(92dvh, 640px);
+		overflow-y: auto;
+		top: auto;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		transform: none;
+		animation: modalInMobile 0.22s ease;
+	}
+
+	.modal-sm {
+		max-width: 100%;
+	}
+
+	@keyframes modalInMobile {
+		from {
+			opacity: 0;
+			transform: translateY(18px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 }
 
 @media (max-width: 480px) {
+	.topbar {
+		padding: 0 12px;
+	}
+
+	.topbar-title h1 {
+		font-size: 1rem;
+		white-space: normal;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.topbar-name {
+		max-width: min(42vw, 140px);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
 	.stats-strip {
 		grid-template-columns: 1fr 1fr;
-		gap: 12px;
+		gap: 10px;
 	}
 
 	.stat-card {
-		padding: 16px;
-		gap: 12px;
+		padding: 14px 12px;
+		gap: 10px;
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
+	}
+
+	.stat-card-icon {
+		width: 40px;
+		height: 40px;
+		font-size: 1.5rem;
 	}
 
 	.stat-card-value {
-		font-size: 1.2rem;
+		font-size: 1.15rem;
+	}
+
+	.stat-card-label {
+		font-size: 0.72rem;
+		line-height: 1.25;
+	}
+
+	.section-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.section-header .btn-add {
+		width: 100%;
+	}
+
+	.section-header--with-toolbar .section-header-toolbar .btn-add {
+		width: 100%;
+	}
+
+	.btn-edit,
+	.btn-delete {
+		padding: 6px 10px;
+		font-size: 0.75rem;
+	}
+
+	.action-btns {
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.modal-actions {
+		flex-direction: column;
+	}
+
+	.modal-actions .btn-modal-cancel,
+	.modal-actions .btn-modal-confirm,
+	.modal-actions .btn-modal-danger {
+		width: 100%;
+	}
+
+	.analytics-charts {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.analytics-chart-frame {
+		height: clamp(260px, 48vh, 400px);
+		min-height: 240px;
 	}
 }
