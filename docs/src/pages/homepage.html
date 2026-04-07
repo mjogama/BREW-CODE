@@ -27,29 +27,31 @@
 				<span class="nav-username" id="navUsername"></span>
 				<a href="./login.html" class="nav-logout">Logout</a>
 			</div>
-			<aside class="nav-cart-sidebar nav-cart-sidebar-animate" id="navCartSidebarContainer">
-				<div class="nav-cart-sidebar-header">
-					<h3 class="nav-cart-sidebar-title">Your Cart</h3>
-					<button class="nav-cart-sidebar-close" id="navCartSidebarButton" aria-label="Close cart">×</button>
-				</div>
-				<div class="nav-cart-sidebar-items" id="navCartSidebarItems"></div>
-				<div class="nav-cart-sidebar-footer">
-					<span class="nav-cart-sidebar-amount">Total amount: <span class="nav-cart-sidebar-amount-font-style" id="displayOrderTotalAmount"></span></span>
-					<div class="nav-cart-sidebar-footer-button">
-						<button class="nav-cart-sidebar-delete-orders nav-cart-sideber-button-style" id="navCartSidebarReset">Reset cart</button>
-						<button class="nav-cart-sidebar-place-order nav-cart-sideber-button-style" id="navCartSidebarPlaceOrder">Place order</button>
-					</div>
-				</div>
-				<div class="nav-cart-sidebar-add-more-prompt is-hidden" id="navCartSidebarAddMore" aria-hidden="true">
-					<p class="nav-cart-sidebar-add-more-text">Anything else to add?</p>
-					<h3 class="nav-cart-sidebar-model-countdown" id="navCartSidebarModalCountdown"></h3>
-					<div class="nav-cart-sidebar-add-more-actions">
-						<button type="button" class="nav-cart-sidebar-add-more-yes nav-cart-sideber-button-style" id="navCartSidebarAddMoreYes">Yes</button>
-						<button type="button" class="nav-cart-sidebar-add-more-no nav-cart-sideber-button-style" id="navCartSidebarAddMoreNo">No</button>
-					</div>
-				</div>
-			</aside>
 		</nav>
+
+		<!-- Cart: sibling of nav so position:fixed is viewport-rooted (nav backdrop-filter would trap fixed and widen scroll width) -->
+		<aside class="nav-cart-sidebar nav-cart-sidebar-animate" id="navCartSidebarContainer">
+			<div class="nav-cart-sidebar-header">
+				<h3 class="nav-cart-sidebar-title">Your Cart</h3>
+				<button class="nav-cart-sidebar-close" id="navCartSidebarButton" aria-label="Close cart">×</button>
+			</div>
+			<div class="nav-cart-sidebar-items" id="navCartSidebarItems"></div>
+			<div class="nav-cart-sidebar-footer">
+				<span class="nav-cart-sidebar-amount">Total amount: <span class="nav-cart-sidebar-amount-font-style" id="displayOrderTotalAmount"></span></span>
+				<div class="nav-cart-sidebar-footer-button">
+					<button class="nav-cart-sidebar-delete-orders nav-cart-sideber-button-style" id="navCartSidebarReset">Reset cart</button>
+					<button class="nav-cart-sidebar-place-order nav-cart-sideber-button-style" id="navCartSidebarPlaceOrder">Place order</button>
+				</div>
+			</div>
+			<div class="nav-cart-sidebar-add-more-prompt is-hidden" id="navCartSidebarAddMore" aria-hidden="true">
+				<p class="nav-cart-sidebar-add-more-text">Anything else to add?</p>
+				<h3 class="nav-cart-sidebar-model-countdown" id="navCartSidebarModalCountdown"></h3>
+				<div class="nav-cart-sidebar-add-more-actions">
+					<button type="button" class="nav-cart-sidebar-add-more-yes nav-cart-sideber-button-style" id="navCartSidebarAddMoreYes">Yes</button>
+					<button type="button" class="nav-cart-sidebar-add-more-no nav-cart-sideber-button-style" id="navCartSidebarAddMoreNo">No</button>
+				</div>
+			</div>
+		</aside>
 
 		<!-- HERO -->
 		<section class="hero">
