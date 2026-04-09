@@ -1,5 +1,5 @@
 import { retrieveTotalProductsAPI, retriveTotalOrdersAPI, retrieveTotalCustomersAPI, retriveTotalRevenueAPI } from "../api/adminAPI/stats.js";
-import { createNewProductAPI, retrievePaginatedCustomersAPI, retrieveProductsAPI, updateProductAPI, deleteProductAPI } from "../api/adminAPI/table.js";
+import { createNewProductAPI, retrievePaginatedProductsAPI, updateProductAPI, deleteProductAPI } from "../api/adminAPI/table.js";
 import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
@@ -37,33 +37,37 @@ let pageNumber = 1;
 let isMaximumPage = pageNumber - 1;
 
 export const retrieveAdminData = async () => {
-	const accessToken = sessionStorage.getItem("accessToken");
+  const accessToken = sessionStorage.getItem("accessToken");
 
-	if (!accessToken) {
-		window.location.href = "./login.html";
-		return;
-	}
+  if (!accessToken) {
+    window.location.href = "./login.html";
+    return;
+  }
 
-	const totalProducts = await retrieveTotalProductsAPI();
-	const totalOrders = await retriveTotalOrdersAPI();
-	const totalCustomers = await retrieveTotalCustomersAPI();
-	const totalRevenue = await retriveTotalRevenueAPI();
-	const paginatedProducts = await retrievePaginatedCustomersAPI(1);
+  const totalProducts = await retrieveTotalProductsAPI();
+  const totalOrders = await retriveTotalOrdersAPI();
+  const totalCustomers = await retrieveTotalCustomersAPI();
+  const totalRevenue = await retriveTotalRevenueAPI();
+  const paginatedProducts = await retrievePaginatedProductsAPI(pageNumber);
 
-	navbarName.textContent = totalCustomers.data.fullName;
+  navbarName.textContent = totalCustomers.data.fullName;
 
-	// Use totalProducts from API (same origin, no dependency on visiting homepage)
-	animateCount(totalProductsEl, totalProducts ?? 0);
-	animateCount(totalOrdersEl, totalOrders ?? 0);
-	animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
-	animateCount(totalRevenueEl, totalRevenue ?? 0);
+  // Use totalProducts from API (same origin, no dependency on visiting homepage)
+  animateCount(totalProductsEl, totalProducts ?? 0);
+  animateCount(totalOrdersEl, totalOrders ?? 0);
+  animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
+  animateCount(totalRevenueEl, totalRevenue ?? 0);
 
-	const data = await retrieveProductsAPI();
+  const products = paginatedProducts || [];
 
-	const products = paginatedProducts || [];
+  if (products.length === 0) {
+    if (pageNumber > 1) {
+      pageNumber--;
+      await retrieveAdminData();
+      return;
+    }
 
-	if (products.length === 0) {
-		tableBody.innerHTML = `
+    tableBody.innerHTML = `
 			<tr class="table-empty-row">
 				<td colspan="4">
 					<div class="empty-state">
@@ -73,11 +77,11 @@ export const retrieveAdminData = async () => {
 				</td>
 			</tr>
 		`;
-	} else {
-		const renderProductRows = (productList) => {
-			tableBody.innerHTML = productList
-				.map((product) => {
-					return `
+  } else {
+    const renderProductRows = (productList) => {
+      tableBody.innerHTML = productList
+        .map((product) => {
+          return `
 			<tr class="product-row">
 				<td data-label="ID">
 					<div>
@@ -98,105 +102,121 @@ export const retrieveAdminData = async () => {
 				</td>
 			</tr>
 		`;
-				})
-				.join("");
-		};
+        })
+        .join("");
+    };
 
-		renderProductRows(products);
+    renderProductRows(products);
 
-		searchProducts?.addEventListener("input", () => {
-			const keyword = searchProducts.value.toLowerCase();
-			const filteredProducts = keyword === "" ? products : products.filter((product) => product.name.toLowerCase().includes(keyword));
-			renderProductRows(filteredProducts);
-			attachRowListeners();
-		});
+    searchProducts?.addEventListener("input", () => {
+      const keyword = searchProducts.value.toLowerCase();
+      const filteredProducts = keyword === "" ? products : products.filter((product) => product.name.toLowerCase().includes(keyword));
+      renderProductRows(filteredProducts);
+      attachRowListeners();
+    });
 
-		sortProducts?.addEventListener("change", (e) => {
-			if (e.target.value === "name-asc") {
-				const sortedProductsAZ = products.sort((a, b) => a.name.localeCompare(b.name));
+    sortProducts?.addEventListener("change", (e) => {
+      if (e.target.value === "name-asc") {
+        const sortedProductsAZ = products.sort((a, b) => a.name.localeCompare(b.name));
 
-				renderProductRows(sortedProductsAZ);
-			}
+        renderProductRows(sortedProductsAZ);
+      }
 
-			if (e.target.value === "name-desc") {
-				const sortedProductsAZ = products.sort((a, b) => b.name.localeCompare(a.name));
+      if (e.target.value === "name-desc") {
+        const sortedProductsAZ = products.sort((a, b) => b.name.localeCompare(a.name));
 
-				renderProductRows(sortedProductsAZ);
-			}
-		});
+        renderProductRows(sortedProductsAZ);
+      }
+    });
 
-		const attachRowListeners = () => {
-			tableBody.querySelectorAll(".edit-button").forEach((btn) => {
-				btn.addEventListener("click", async () => {
-					const productId = btn.getAttribute("data-product-id");
-					const productName = btn.getAttribute("data-product-name");
+    const attachRowListeners = () => {
+      tableBody.querySelectorAll(".edit-button").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const productId = btn.getAttribute("data-product-id");
+          const productName = btn.getAttribute("data-product-name");
 
-					if (editModal && editIdInput && editNameInput) {
-						editIdInput.value = productId;
-						editNameInput.value = productName || "";
-						document.getElementById("editProductError").textContent = "";
-						editModal.classList.add("open");
-					}
-				});
-			});
+          if (editModal && editIdInput && editNameInput) {
+            editIdInput.value = productId;
+            editNameInput.value = productName || "";
+            document.getElementById("editProductError").textContent = "";
+            editModal.classList.add("open");
+          }
+        });
+      });
 
-			tableBody.querySelectorAll(".delete-button").forEach((btn) => {
-				btn.addEventListener("click", async () => {
-					const productId = btn.getAttribute("data-product-id");
-					await deleteProductAPI(productId);
-					retrieveAdminData();
-				});
-			});
-		};
+      tableBody.querySelectorAll(".delete-button").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const productId = btn.getAttribute("data-product-id");
+          await deleteProductAPI(productId);
+          retrieveAdminData();
+        });
+      });
+    };
 
-		attachRowListeners();
-	}
+    attachRowListeners();
+  }
 
-	tableCountBodyProducts.innerHTML = `
+  tableCountBodyProducts.innerHTML = `
 		<span class="table-count" id="tableCount">Page No. ${pageNumber} of products</span>
 	`;
 };
 
+const tableFooterButtons = document.querySelectorAll(".footer-button");
+
+tableFooterButtons.forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const data = btn.getAttribute("data-number");
+    pageNumber += Number(data);
+
+    if (pageNumber === 0) {
+      pageNumber++;
+      Math.ceil((isMaximumPage -= 1.5));
+    }
+
+    await retrieveAdminData();
+  });
+});
+
 // add product modal: open only on button click
 openAddProductModalButton?.addEventListener("click", () => {
-	addProductModal?.classList.add("open");
-	newProductEmoji.value = "";
-	newProductName.value = "";
-	newProductDesc.value = "";
-	newProductPrice.value = "";
+  addProductModal?.classList.add("open");
+  newProductEmoji.value = "";
+  newProductName.value = "";
+  newProductDesc.value = "";
+  newProductPrice.value = "";
 });
 
 const closeAddProductModal = () => {
-	addProductModal?.classList.remove("open");
+  addProductModal?.classList.remove("open");
 };
 
 document.getElementById("closeAddProductModal")?.addEventListener("click", closeAddProductModal);
 document.getElementById("cancelAddProduct")?.addEventListener("click", closeAddProductModal);
 
 document.getElementById("addProductForm")?.addEventListener("submit", async (e) => {
-	e.preventDefault();
+  e.preventDefault();
 
-	if (!newProductEmoji.value || !newProductName.value || !newProductDesc.value || !newProductPrice.value) {
-		const addProductError = document.getElementById("addProductError");
+  if (!newProductEmoji.value || !newProductName.value || !newProductDesc.value || !newProductPrice.value) {
+    const addProductError = document.getElementById("addProductError");
 
-		if (!addProductError) return;
-		addProductError.textContent = "All fields are required.";
+    if (!addProductError) return;
+    addProductError.textContent = "All fields are required.";
 
-		setTimeout(() => {
-			addProductError.textContent = "";
-		}, 2000);
-		return;
-	}
+    setTimeout(() => {
+      addProductError.textContent = "";
+    }, 2000);
+    return;
+  }
 
-	await createNewProductAPI({
-		emoji: newProductEmoji.value,
-		name: newProductName.value,
-		desc: newProductDesc.value,
-		price: newProductPrice.value,
-	});
+  await createNewProductAPI({
+    emoji: newProductEmoji.value,
+    name: newProductName.value,
+    desc: newProductDesc.value,
+    price: newProductPrice.value,
+  });
 
-	closeAddProductModal();
-	retrieveAdminData();
+  closeAddProductModal();
+  retrieveAdminData();
 });
 
 // Modal for table actions
@@ -206,10 +226,10 @@ document.getElementById("closeEditProductModal")?.addEventListener("click", clos
 document.getElementById("cancelEditProduct")?.addEventListener("click", closeEditModal);
 
 document.getElementById("editProductForm")?.addEventListener("submit", async (e) => {
-	e.preventDefault();
-	const data = await updateProductAPI(editIdInput.value, editNameInput.value);
-	closeEditModal();
-	if (data) retrieveAdminData();
+  e.preventDefault();
+  const data = await updateProductAPI(editIdInput.value, editNameInput.value);
+  closeEditModal();
+  if (data) retrieveAdminData();
 });
 
 initAdminLayout();
