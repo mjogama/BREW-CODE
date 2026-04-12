@@ -12,8 +12,8 @@
 			<div class="sidebar-logo">Brew<span> & Code</span></div>
 			<nav class="sidebar-nav">
 				<ul>
-					<li class="sidebar-nav-item active">
-						<a href="#products">
+					<li class="sidebar-nav-item">
+						<a href="./admin.html">
 							<span class="nav-icon">📦</span>
 							<span>Products</span>
 						</a>
@@ -66,8 +66,40 @@
 
 			<!-- MAIN -->
 			<main class="admin-main">
+				<!-- STATS STRIP SKELETON -->
+				<div class="stats-strip skeleton-loading skeleton-hidden" id="statsSkeleton">
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+				</div>
+
 				<!-- STATS STRIP -->
-				<div class="stats-strip">
+				<div class="stats-strip" id="statsStrip">
 					<div class="stat-card">
 						<div class="stat-card-icon">📦</div>
 						<div class="stat-card-body">
@@ -121,8 +153,81 @@
 						</div>
 					</div>
 
+					<!-- PRODUCTS TABLE SKELETON -->
+					<div class="skeleton-table-wrapper" id="productsTableSkeleton">
+						<div class="table-wrapper">
+							<table class="skeleton-table">
+								<thead>
+									<tr>
+										<th class="col-id">ID</th>
+										<th class="col-name">Product Name</th>
+										<th class="col-date">Added</th>
+										<th class="col-actions-skeleton">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><div class="skeleton-row-cell skeleton"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-medium"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-short"></div></td>
+										<td>
+											<div class="skeleton-actions-cell">
+												<div class="skeleton-btn skeleton"></div>
+												<div class="skeleton-btn skeleton"></div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td><div class="skeleton-row-cell skeleton"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-medium"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-short"></div></td>
+										<td>
+											<div class="skeleton-actions-cell">
+												<div class="skeleton-btn skeleton"></div>
+												<div class="skeleton-btn skeleton"></div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td><div class="skeleton-row-cell skeleton"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-medium"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-short"></div></td>
+										<td>
+											<div class="skeleton-actions-cell">
+												<div class="skeleton-btn skeleton"></div>
+												<div class="skeleton-btn skeleton"></div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td><div class="skeleton-row-cell skeleton"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-medium"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-short"></div></td>
+										<td>
+											<div class="skeleton-actions-cell">
+												<div class="skeleton-btn skeleton"></div>
+												<div class="skeleton-btn skeleton"></div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td><div class="skeleton-row-cell skeleton"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-medium"></div></td>
+										<td><div class="skeleton-row-cell skeleton skeleton-text-short"></div></td>
+										<td>
+											<div class="skeleton-actions-cell">
+												<div class="skeleton-btn skeleton"></div>
+												<div class="skeleton-btn skeleton"></div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
 					<!-- PRODUCTS TABLE -->
-					<div class="table-wrapper">
+					<div class="table-wrapper skeleton-hidden" id="productsTableWrapper">
 						<table class="data-table" id="productsTable">
 							<colgroup>
 								<col class="admin-col-id" />
@@ -143,7 +248,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="table-footer-wrapper">
+					<div class="table-footer-wrapper skeleton-hidden" id="productsTableFooter">
 						<div class="table-footer" id="tableCountBodyProducts"></div>
 						<div class="table-footer-buttons" id="customersPagination">
 							<button type="button" class="footer-button" aria-label="Previous page" data-number="-1">Previous</button>

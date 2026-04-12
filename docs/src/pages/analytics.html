@@ -11,7 +11,7 @@
 			<div class="sidebar-logo">Brew<span> & Code</span></div>
 			<nav class="sidebar-nav">
 				<ul>
-					<li class="sidebar-nav-item active">
+					<li class="sidebar-nav-item">
 						<a href="./admin.html">
 							<span class="nav-icon">📦</span>
 							<span>Products</span>
@@ -30,7 +30,7 @@
 						</a>
 					</li>
 					<li class="sidebar-nav-item">
-						<a href="#analytics">
+						<a href="./analytics.html">
 							<span class="nav-icon">📊</span>
 							<span>Analytics</span>
 						</a>
@@ -63,8 +63,40 @@
 
 			<!-- MAIN -->
 			<main class="admin-main">
+				<!-- STATS STRIP SKELETON -->
+				<div class="stats-strip skeleton-loading skeleton-hidden" id="statsSkeleton">
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-card-icon skeleton"></div>
+						<div class="stat-card-body">
+							<span class="stat-card-value skeleton"></span>
+							<span class="stat-card-label skeleton"></span>
+						</div>
+					</div>
+				</div>
+
 				<!-- STATS STRIP -->
-				<div class="stats-strip">
+				<div class="stats-strip skeleton-hidden" id="statsStrip">
 					<div class="stat-card">
 						<div class="stat-card-icon">📦</div>
 						<div class="stat-card-body">
@@ -95,9 +127,11 @@
 					</div>
 				</div>
 				<div class="analytics-charts">
-					<div class="analytics-chart-frame">
-						<canvas id="productGraph" aria-label="Products sold chart"></canvas>
+					<!-- CHART SKELETON -->
+					<div class="analytics-chart-frame skeleton-chart skeleton-hidden" id="chartSkeleton">
+						<div class="skeleton" style="width: 100%; height: 100%;"></div>
 					</div>
+					<canvas id="productGraph" aria-label="Products sold chart" class="skeleton-hidden"></canvas>
 				</div>
 			</main>
 		</div>

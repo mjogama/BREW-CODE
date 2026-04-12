@@ -4,6 +4,7 @@ import animateCount from "../utils/animateCount.js";
 import formatDate from "../utils/formatDate.js";
 import regexHTMLHandler from "../utils/regexHTMLHandler.js";
 import { initAdminLayout } from "./adminLayout.js";
+import { hideSkeleton } from "../utils/skeletonLoader.js";
 
 // products statistics elements
 const navbarName = document.getElementById("navbarName");
@@ -11,6 +12,13 @@ const totalProductsEl = document.getElementById("totalProducts");
 const totalOrdersEl = document.getElementById("totalOrders");
 const totalCustomersEl = document.getElementById("totalCustomers");
 const totalRevenueEl = document.getElementById("totalRevenue");
+
+// skeleton elements
+const statsSkeleton = document.getElementById("statsSkeleton");
+const productsTableSkeleton = document.getElementById("productsTableSkeleton");
+const statsStrip = document.getElementById("statsStrip");
+const productsTableWrapper = document.getElementById("productsTableWrapper");
+const productsTableFooter = document.getElementById("productsTableFooter");
 
 // add product modal elements
 const addProductModal = document.getElementById("addProductModal");
@@ -34,21 +42,26 @@ const tableBody = document.getElementById("productsTableBody");
 const tableCountBodyProducts = document.getElementById("tableCountBodyProducts");
 
 let pageNumber = 1;
-let isMaximumPage = pageNumber - 1;
 
-export const retrieveAdminData = async () => {
-  const accessToken = sessionStorage.getItem("accessToken");
-
-  if (!accessToken) {
-    window.location.href = "./login.html";
-    return;
-  }
+const retrieveStatsData = async () => {
+  // Show skeletons before fetching
+  statsSkeleton?.classList.remove("skeleton-hidden");
+  productsTableSkeleton?.classList.add("visible");
+  statsStrip?.classList.add("skeleton-hidden");
+  productsTableWrapper?.classList.add("skeleton-hidden");
+  productsTableFooter?.classList.add("skeleton-hidden");
 
   const totalProducts = await retrieveTotalProductsAPI();
   const totalOrders = await retriveTotalOrdersAPI();
   const totalCustomers = await retrieveTotalCustomersAPI();
   const totalRevenue = await retriveTotalRevenueAPI();
-  const paginatedProducts = await retrievePaginatedProductsAPI(pageNumber);
+
+  // Hide skeletons after data is loaded
+  statsSkeleton?.classList.add("skeleton-hidden");
+  productsTableSkeleton?.classList.remove("visible");
+  statsStrip?.classList.remove("skeleton-hidden");
+  productsTableWrapper?.classList.remove("skeleton-hidden");
+  productsTableFooter?.classList.remove("skeleton-hidden");
 
   navbarName.textContent = totalCustomers.data.fullName;
 
@@ -57,6 +70,21 @@ export const retrieveAdminData = async () => {
   animateCount(totalOrdersEl, totalOrders ?? 0);
   animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
   animateCount(totalRevenueEl, totalRevenue ?? 0);
+};
+
+export const retrieveAdminData = async () => {
+  const accessToken = sessionStorage.getItem("accessToken");
+
+  if (!accessToken) {
+    window.location.href = "./login.html";
+    return;
+  }
+  const totalProducts = await retrieveTotalProductsAPI();
+
+  // Update pagination button states
+  updatePaginationButtons(totalProducts);
+
+  const paginatedProducts = await retrievePaginatedProductsAPI(pageNumber);
 
   const products = paginatedProducts || [];
 
@@ -161,18 +189,33 @@ export const retrieveAdminData = async () => {
 	`;
 };
 
+/** Update pagination button disabled states based on current page and total */
+const updatePaginationButtons = (total) => {
+  const ITEMS_PER_PAGE = 8;
+  const maxPage = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+  const buttons = document.querySelectorAll(".footer-button");
+
+  buttons.forEach((btn) => {
+    const direction = Number(btn.getAttribute("data-number"));
+    if (direction === -1) {
+      btn.disabled = pageNumber <= 1;
+    } else {
+      btn.disabled = pageNumber >= maxPage;
+    }
+  });
+};
+
 const tableFooterButtons = document.querySelectorAll(".footer-button");
 
 tableFooterButtons.forEach((btn) => {
   btn.addEventListener("click", async () => {
     const data = btn.getAttribute("data-number");
-    pageNumber += Number(data);
+    const direction = Number(data);
 
-    if (pageNumber === 0) {
-      pageNumber++;
-      Math.ceil((isMaximumPage -= 1.5));
-    }
+    // Prevent navigation beyond bounds
+    if (direction === -1 && pageNumber <= 1) return;
 
+    pageNumber += direction;
     await retrieveAdminData();
   });
 });
@@ -234,3 +277,4 @@ document.getElementById("editProductForm")?.addEventListener("submit", async (e)
 
 initAdminLayout();
 retrieveAdminData();
+retrieveStatsData();
