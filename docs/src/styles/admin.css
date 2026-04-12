@@ -1443,6 +1443,223 @@ col.admin-col-actions {
   color: var(--text);
 }
 
+/* ─── SKELETON LOADING ────────────────────────────────── */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e8d5c0 0%, #f5ede0 40%, #fdf6ec 50%, #f5ede0 60%, #e8d5c0 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 100%;
+}
+
+.skeleton-text-short {
+  height: 1rem;
+  width: 60%;
+}
+
+.skeleton-text-medium {
+  height: 1rem;
+  width: 80%;
+}
+
+/* Skeleton stat cards */
+.stats-strip.skeleton-loading {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stats-strip.skeleton-loading .stat-card {
+  background-color: #fff;
+  border: 1px solid rgba(232, 160, 69, 0.15);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stats-strip.skeleton-loading .stat-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.stats-strip.skeleton-loading .stat-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.stats-strip.skeleton-loading .stat-card-value {
+  height: 1.6rem;
+  width: 50%;
+  border-radius: 6px;
+}
+
+.stats-strip.skeleton-loading .stat-card-label {
+  height: 0.8rem;
+  width: 70%;
+  border-radius: 4px;
+}
+
+/* Skeleton table */
+.skeleton-table-wrapper {
+  display: none;
+}
+
+.skeleton-table-wrapper.visible {
+  display: block;
+}
+
+.skeleton-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.skeleton-table thead {
+  background-color: #fdf6ec;
+  border-bottom: 2px solid #f0e6d6;
+}
+
+.skeleton-table th {
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.skeleton-table th.col-actions-skeleton {
+  text-align: right;
+}
+
+.skeleton-table tbody td {
+  padding: 14px 20px;
+  height: 67px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f5ede0;
+}
+
+.skeleton-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.skeleton-row-cell {
+  height: 1rem;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.skeleton-actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.skeleton-btn {
+  height: 28px;
+  width: 60px;
+  border-radius: 8px;
+}
+
+/* Skeleton chart */
+.skeleton-chart {
+  width: 100%;
+  height: clamp(240px, 38vh, 420px);
+  border-radius: 16px;
+  border: 1px solid rgba(232, 160, 69, 0.15);
+  background-color: #fff;
+}
+
+/* Hide skeleton elements when content is loaded */
+.skeleton-hidden {
+  display: none !important;
+}
+
+/* Skeleton menu cards for homepage */
+.skeleton-card {
+  position: relative;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-card .menu-card-emoji {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e8d5c0 25%, #f5ede0 50%, #fdf6ec 75%, #f5ede0 85%, #e8d5c0);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s infinite;
+}
+
+.skeleton-card .menu-card-body h3 {
+  height: 1.25rem;
+  width: 80%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8d5c0 25%, #f5ede0 50%, #fdf6ec 75%, #f5ede0 85%, #e8d5c0);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s infinite;
+  color: transparent;
+}
+
+.skeleton-card .menu-card-desc {
+  height: 1rem;
+  width: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8d5c0 25%, #f5ede0 50%, #fdf6ec 75%, #f5ede0 85%, #e8d5c0);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s infinite;
+  color: transparent;
+}
+
+.skeleton-card .price {
+  display: inline-block;
+  height: 1.25rem;
+  width: 60px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8d5c0 25%, #f5ede0 50%, #fdf6ec 75%, #f5ede0 85%, #e8d5c0);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s infinite;
+  color: transparent;
+}
+
+.skeleton-card .add-to-cart-btn {
+  height: 2.25rem;
+  width: 100px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e8d5c0 25%, #f5ede0 50%, #fdf6ec 75%, #f5ede0 85%, #e8d5c0);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s infinite;
+  border: none;
+  color: transparent;
+}
+
 /* ─── ANALYTICS CHARTS ────────────────────────────────── */
 
 .analytics-charts {

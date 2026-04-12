@@ -11,6 +11,12 @@ const totalOrdersEl = document.getElementById("totalOrders");
 const totalCustomersEl = document.getElementById("totalCustomers");
 const totalRevenueEl = document.getElementById("totalRevenue");
 
+// skeleton elements
+const statsSkeleton = document.getElementById("statsSkeleton");
+const statsStrip = document.getElementById("statsStrip");
+const chartSkeleton = document.getElementById("chartSkeleton");
+const productGraph = document.getElementById("productGraph");
+
 let salesChart = null;
 let chartResizeObserver = null;
 let refreshInFlight = null;
@@ -105,6 +111,12 @@ export const retrieveGraphData = async () => {
 };
 
 const retrieveStatsData = async () => {
+	// Show skeletons before fetching
+	statsSkeleton?.classList.remove("skeleton-hidden");
+	statsStrip?.classList.add("skeleton-hidden");
+	chartSkeleton?.classList.remove("skeleton-hidden");
+	productGraph?.classList.add("skeleton-hidden");
+
 	const totalProducts = await retrieveTotalProductsAPI();
 	const totalOrders = await retriveTotalOrdersAPI();
 	const totalCustomers = await retrieveTotalCustomersAPI();
@@ -120,6 +132,12 @@ const retrieveStatsData = async () => {
 	animateCount(totalRevenueEl, totalRevenue ?? 0);
 
 	await retrieveGraphData();
+
+	// Hide skeletons after data is loaded
+	statsSkeleton?.classList.add("skeleton-hidden");
+	statsStrip?.classList.remove("skeleton-hidden");
+	chartSkeleton?.classList.add("skeleton-hidden");
+	productGraph?.classList.remove("skeleton-hidden");
 };
 
 /** Refetch stats + chart (e.g. after a new order). Safe to call from BroadcastChannel or focus handlers. */

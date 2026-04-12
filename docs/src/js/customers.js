@@ -12,43 +12,68 @@ const totalOrdersEl = document.getElementById("totalOrders");
 const totalCustomersEl = document.getElementById("totalCustomers");
 const totalRevenueEl = document.getElementById("totalRevenue");
 
+// skeleton elements
+const statsSkeleton = document.getElementById("statsSkeleton");
+const customersTableSkeleton = document.getElementById("customersTableSkeleton");
+const statsStrip = document.getElementById("statsStrip");
+const customersTableWrapper = document.getElementById("customersTableWrapper");
+const customersTableFooter = document.getElementById("customersTableFooter");
+
 const searchCustomers = document.getElementById("searchCustomers");
 const sortCustomersName = document.getElementById("sortCustomersName");
 const customersTableBody = document.getElementById("customersTableBody");
 const tableCountBodyOrders = document.getElementById("tableCountBodyOrders");
 
 let pageNumber = 1;
-let isMaximumPage = pageNumber - 1;
 
 const retrieveStatsData = async () => {
-	const totalProducts = await retrieveTotalProductsAPI();
-	const totalOrders = await retriveTotalOrdersAPI();
-	const totalCustomers = await retrieveTotalCustomersAPI();
-	const totalRevenue = await retriveTotalRevenueAPI();
+  // Show skeletons before fetching
+  statsSkeleton?.classList.remove("skeleton-hidden");
+  customersTableSkeleton?.classList.add("visible");
+  statsStrip?.classList.add("skeleton-hidden");
+  customersTableWrapper?.classList.add("skeleton-hidden");
+  customersTableFooter?.classList.add("skeleton-hidden");
 
-	navbarName.textContent = totalCustomers.data.fullName;
+  const totalProducts = await retrieveTotalProductsAPI();
+  const totalOrders = await retriveTotalOrdersAPI();
+  const totalCustomers = await retrieveTotalCustomersAPI();
+  const totalRevenue = await retriveTotalRevenueAPI();
 
-	// Use totalProducts from API (same origin, no dependency on visiting homepage)
-	animateCount(totalProductsEl, totalProducts ?? 0);
-	animateCount(totalOrdersEl, totalOrders ?? 0);
-	animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
-	animateCount(totalRevenueEl, totalRevenue ?? 0);
+  navbarName.textContent = totalCustomers.data.fullName;
+
+  // Hide skeletons after data is loaded
+  statsSkeleton?.classList.add("skeleton-hidden");
+  customersTableSkeleton?.classList.remove("visible");
+  statsStrip?.classList.remove("skeleton-hidden");
+  customersTableWrapper?.classList.remove("skeleton-hidden");
+  customersTableFooter?.classList.remove("skeleton-hidden");
+
+  // Use totalProducts from API (same origin, no dependency on visiting homepage)
+  animateCount(totalProductsEl, totalProducts ?? 0);
+  animateCount(totalOrdersEl, totalOrders ?? 0);
+  animateCount(totalCustomersEl, totalCustomers.totalCustomers ?? 0);
+  animateCount(totalRevenueEl, totalRevenue ?? 0);
 };
 
 const retrieveCustomersDataHandler = async () => {
-	const paginatedCustomers = await retrievePaginatedCustomersAPI(pageNumber);
+  const totalCustomers = await retrieveTotalCustomersAPI();
 
-	const customers = paginatedCustomers || [];
+  // Update pagination button states
+  updatePaginationButtons(totalCustomers.totalCustomers ?? 0);
 
-	if (customers.length === 0) {
-		// Empty page: only step back when we are past page 1 (e.g. overshoot or last row deleted).
-		// On page 1 with zero total customers, keep pageNumber at 1 — do not go to 0 or negative.
-		if (pageNumber > 1) {
-			pageNumber--;
-			await retrieveCustomersDataHandler();
-			return;
-		}
-		customersTableBody.innerHTML = `
+  const paginatedCustomers = await retrievePaginatedCustomersAPI(pageNumber);
+
+  const customers = paginatedCustomers || [];
+
+  if (customers.length === 0) {
+    // Empty page: only step back when we are past page 1 (e.g. overshoot or last row deleted).
+    // On page 1 with zero total customers, keep pageNumber at 1 — do not go to 0 or negative.
+    if (pageNumber > 1) {
+      pageNumber--;
+      await retrieveCustomersDataHandler();
+      return;
+    }
+    customersTableBody.innerHTML = `
 			<tr class="table-empty-row">
 				<td colspan="5">
 					<div class="empty-state">
@@ -58,11 +83,11 @@ const retrieveCustomersDataHandler = async () => {
 				</td>
 			</tr>
 		`;
-	} else {
-		const renderCustomersTable = (customers) => {
-			customersTableBody.innerHTML = customers
-				.map((customer) => {
-					return `
+  } else {
+    const renderCustomersTable = (customers) => {
+      customersTableBody.innerHTML = customers
+        .map((customer) => {
+          return `
      	<tr class="product-row">
 			<td data-label="ID">
 				<div>
@@ -90,66 +115,81 @@ const retrieveCustomersDataHandler = async () => {
 			</td>
 		</tr>
     `;
-				})
-				.join("");
-		};
+        })
+        .join("");
+    };
 
-		searchCustomers?.addEventListener("input", () => {
-			const customerName = searchCustomers.value.toLowerCase();
-			const filteredCustomerName =
-				customerName === ""
-					? customers
-					: customers.filter((name) => {
-							return name.fullName.toLowerCase().includes(customerName);
-						});
-			renderCustomersTable(filteredCustomerName);
-		});
+    searchCustomers?.addEventListener("input", () => {
+      const customerName = searchCustomers.value.toLowerCase();
+      const filteredCustomerName =
+        customerName === ""
+          ? customers
+          : customers.filter((name) => {
+              return name.fullName.toLowerCase().includes(customerName);
+            });
+      renderCustomersTable(filteredCustomerName);
+    });
 
-		renderCustomersTable(customers);
+    renderCustomersTable(customers);
 
-		sortCustomersName?.addEventListener("change", (e) => {
-			e.preventDefault();
+    sortCustomersName?.addEventListener("change", (e) => {
+      e.preventDefault();
 
-			if (sortCustomersName.value === "name-asc") {
-				const customerNameAZ = customers.sort((a, b) => a.fullName.localeCompare(b.fullName));
-				renderCustomersTable(customerNameAZ);
-			} else {
-				const customerNameZA = customers.sort((a, b) => b.fullName.localeCompare(a.fullName));
-				renderCustomersTable(customerNameZA);
-			}
-		});
+      if (sortCustomersName.value === "name-asc") {
+        const customerNameAZ = customers.sort((a, b) => a.fullName.localeCompare(b.fullName));
+        renderCustomersTable(customerNameAZ);
+      } else {
+        const customerNameZA = customers.sort((a, b) => b.fullName.localeCompare(a.fullName));
+        renderCustomersTable(customerNameZA);
+      }
+    });
 
-		customersTableBody.querySelectorAll(".delete-button").forEach((btn) => {
-			btn.addEventListener("click", async () => {
-				const userId = btn.getAttribute("data-customer-id");
-				await deleteCustomerDataAPI(userId);
-				await retrieveStatsData();
-				await retrieveCustomersDataHandler();
-			});
-		});
-	}
+    customersTableBody.querySelectorAll(".delete-button").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const userId = btn.getAttribute("data-customer-id");
+        await deleteCustomerDataAPI(userId);
+        await retrieveStatsData();
+        await retrieveCustomersDataHandler();
+      });
+    });
+  }
 
-	tableCountBodyOrders.innerHTML = `
+  tableCountBodyOrders.innerHTML = `
 		<span class="table-count" id="tableCount">Page No. ${pageNumber} of customers</span>
 	`;
+};
+
+/** Update pagination button disabled states based on current page and total */
+const updatePaginationButtons = (total) => {
+  const ITEMS_PER_PAGE = 8;
+  const maxPage = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+  const buttons = document.querySelectorAll(".footer-button");
+
+  buttons.forEach((btn) => {
+    const direction = Number(btn.getAttribute("data-number"));
+    if (direction === -1) {
+      btn.disabled = pageNumber <= 1;
+    } else {
+      btn.disabled = pageNumber >= maxPage;
+    }
+  });
 };
 
 const tableFooterButtons = document.querySelectorAll(".footer-button");
 
 tableFooterButtons.forEach((btn) => {
-	btn.addEventListener("click", async () => {
-		const data = btn.getAttribute("data-number");
-		pageNumber += Number(data);
+  btn.addEventListener("click", async () => {
+    const data = btn.getAttribute("data-number");
+    const direction = Number(data);
 
-		if (pageNumber === 0) {
-			pageNumber++;
-			Math.ceil((isMaximumPage -= 1.5));
-		}
+    // Prevent navigation beyond bounds
+    if (direction === -1 && pageNumber <= 1) return;
 
-		await retrieveCustomersDataHandler();
-	});
+    pageNumber += direction;
+    await retrieveCustomersDataHandler();
+  });
 });
 
-initAdminLayout();
 retrieveStatsData();
 retrieveCustomersDataHandler();
+initAdminLayout();
