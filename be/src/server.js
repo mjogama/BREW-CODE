@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 8080;
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin: process.env.ORIGIN_PROD,
     // origin: process.env.ORIGIN_PROD, // Comment out if not in making any changes
     methods: ["POST", "GET", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
